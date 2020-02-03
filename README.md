@@ -1,27 +1,23 @@
-# XMaterial
+# x-material
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
+## INTRO
 
-## Development server
+此项目包含对 @angular/material 基础组件二次封装，以及针对项目需求开发的公共组件，各组件的使用方法见 demo 文件夹。
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+你可以将 demo 运行后在本地查看各组件的实际效果。
 
-## Code scaffolding
+## DEMO
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+npm start
+```
 
-## Build
+## PUBLISH
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+1. cd projects/x-material
+2. change the code
+3. npm version patch
+4. ng build x-material
+5. cd dist/x-material
+6. npm login
+7. npm publish [--tag beta]

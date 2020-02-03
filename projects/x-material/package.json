@@ -1,0 +1,11 @@
+{
+  "name": "x-material",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/material": "^8.2.14",
+    "@angular/core": "^8.2.14"
+  },
+  "publishConfig": {
+    "registry": "http://39.97.201.33/repository/npm-hosted/"
+  }
+}
