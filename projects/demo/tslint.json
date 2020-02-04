@@ -4,13 +4,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "formly",
+      "x-mat",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "formly",
+      "x-mat",
       "kebab-case"
     ]
   }

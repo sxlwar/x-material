@@ -1,18 +1,22 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroupDirective, NgControl, NgForm } from '@angular/forms';
 import { ErrorStateMatcher, mixinDisabled } from '@angular/material/core';
-import { MatFormFieldControl, MatFormFieldAppearance } from '@angular/material/form-field';
+import { MatFormFieldAppearance, MatFormFieldControl } from '@angular/material/form-field';
 
 class XMatPasswordBase {
   constructor(
+    // tslint:disable-next-line
     public _defaultErrorStateMatcher: ErrorStateMatcher,
+    // tslint:disable-next-line
     public _parentForm: NgForm,
+    // tslint:disable-next-line
     public _parentFormGroup: FormGroupDirective,
     /** @docs-private */
     public ngControl: NgControl
   ) {}
 }
 
+// tslint:disable-next-line
 const _XMatPasswordBase = mixinDisabled(XMatPasswordBase);
 
 @Component({
@@ -32,12 +36,12 @@ export class PasswordComponent extends _XMatPasswordBase implements OnInit {
    * form field label;
    * default: password;
    */
-  @Input() label: string = 'password';
+  @Input() label = 'password';
 
   /**
    * placeholder of input element;
    */
-  @Input() placeholder: string = '';
+  @Input() placeholder = '';
 
   /**
    * appearance?: 'legacy' | 'standard' | 'fill' | 'outline'

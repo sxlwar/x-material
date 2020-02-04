@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve demo --open",
     "format": "prettier --config .prettier.config.js projects/x-formly/src/**/*.ts --write",
+    "stylelint": "stylelint \"projects/**/*.scss\" --config .stylelint.config.js",
     "build": "ng build",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -12,8 +13,7 @@
   "private": true,
   "husky": {
     "hooks": {
-      "pre-push": "ng lint",
-      "pre-commit": "pretty-quick --staged",
+      "pre-commit": "pretty-quick --staged && npm run stylelint && ng lint",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
@@ -31,6 +31,7 @@
     "bootstrap": "^4.4.1",
     "hammerjs": "^2.0.8",
     "rxjs": "~6.4.0",
+    "stylelint": "^13.0.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
@@ -55,9 +56,15 @@
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "protractor": "~5.4.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-config-standard": "^19.0.0",
+    "stylelint-prettier": "^1.1.2",
     "ts-node": "~7.0.0",
     "tsickle": "^0.38.0",
     "tslint": "~5.15.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.1.0",
     "typescript": "~3.5.3",
     "xal-config": "0.0.6"
   }
