@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
-import { XMatPasswordModule } from './password';
+
+import { XMatPasswordModule } from './password/password-module';
 
 @NgModule({
-    exports: [XMatPasswordModule],
-    declarations: [],
-    providers: [],
+  exports: [XMatPasswordModule],
 })
-export class XMaterialModule { }
+export class XMatModule {}

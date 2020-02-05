@@ -2,8 +2,10 @@
   "extends": "xal-config/tsconfig",
   "compilerOptions": {
     "baseUrl": "./",
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "paths": {
-      "x-material": ["projects/x-material/src/public-api"],
+      "x-material/*": ["projects/x-material/src/lib/*"],
       "@assets/*": ["projects/demo/src/assets/*"]
     }
   }
