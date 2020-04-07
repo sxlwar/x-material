@@ -4,5 +4,6 @@
  */
 
 export * from './lib/password/index';
+export * from './lib/breadcrumb/index';
 
 export { XMatModule } from './lib/x-material.module';

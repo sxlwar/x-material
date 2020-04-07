@@ -1,0 +1,7 @@
+<x-mat-breadcrumb>
+  <a x-mat-bread [routerLink]="['/']" [queryParams]="{ query: 1 }">Home</a>
+  <a x-mat-bread [routerLink]="['/', 'password']" [queryParams]="{ query: 2 }">Password</a>
+  <a x-mat-bread [routerLink]="['/components', 'breadcrumbs', 'examples']" [queryParams]="{ query: 3 }">Breadcrumb 2</a>
+  <a x-mat-bread [routerLink]="['/components', 'breadcrumbs', 'examples']" [queryParams]="{ query: 4 }">Breadcrumb 3</a>
+  <x-mat-bread>Current</x-mat-bread>
+</x-mat-breadcrumb>
