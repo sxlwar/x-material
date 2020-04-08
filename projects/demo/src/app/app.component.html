@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+<div class="demo-container">
+  <div class="side-nav">
+    <a *ngFor="let item of configs" [routerLink]="[item]" routerLinkActive="router-link-active">{{ item }}</a>
+  </div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

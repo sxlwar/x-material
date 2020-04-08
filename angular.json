@@ -59,10 +59,7 @@
             "tsConfig": "projects/demo/tsconfig.app.json",
             "aot": false,
             "assets": ["projects/demo/src/favicon.ico", "projects/demo/src/assets"],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "projects/demo/src/styles.scss"
-            ],
+            "styles": ["projects/demo/src/styles.scss"],
             "scripts": []
           },
           "configurations": {

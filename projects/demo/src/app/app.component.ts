@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { routes } from './material/config';
+
 @Component({
   selector: 'x-mat-root',
   templateUrl: './app.component.html',
@@ -7,4 +9,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'demo';
+  configs = routes.map(item => item.path);
 }

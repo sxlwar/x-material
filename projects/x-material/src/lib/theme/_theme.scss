@@ -1,0 +1,8 @@
+@import '../message/message-theme';
+@import './typography';
+
+// Create a theme.
+@mixin x-mat-theme($theme, $config: null) {
+  @include x-mat-typography($config);
+  @include x-mat-message-theme($theme);
+}

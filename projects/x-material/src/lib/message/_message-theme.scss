@@ -1,0 +1,41 @@
+@import '../common/styles/theme-functions';
+@import '../common/styles/typography-functions';
+
+@mixin x-mat-message-typography($config) {
+  .x-mat-message-label {
+    font: {
+      family: x-mat-font-family($config);
+      size: x-mat-font-size($config, body-2);
+      weight: 600;
+    }
+
+    line-height: x-mat-line-height($config, body-2);
+  }
+  .x-mat-message-subLabel {
+    font: {
+      family: x-mat-font-family($config);
+      size: x-mat-font-size($config, body-1);
+    }
+  }
+}
+
+@mixin x-mat-message-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  .x-mat-message {
+    &.mat-primary {
+      color: mat-color($primary);
+      background-color: mat-color($primary, 0.15);
+    }
+    &.mat-accent {
+      color: mat-color($accent);
+      background-color: mat-color($accent, 0.15);
+    }
+    &.mat-warn {
+      color: mat-color($warn);
+      background-color: mat-color($warn, 0.15);
+    }
+  }
+}

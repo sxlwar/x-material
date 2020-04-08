@@ -1,0 +1,11 @@
+<x-mat-message
+  #messageDemo
+  class="pad-sm push-bottom"
+  color="warn"
+  label="Manage visibility"
+  subLabel="Click the button to hide message"
+>
+  <button x-mat-message-actions mat-icon-button (click)="messageDemo.close()">
+    <mat-icon>cancel</mat-icon>
+  </button>
+</x-mat-message>

@@ -1,0 +1,11 @@
+<div XMatMessageContainer></div>
+<ng-template #tpl>
+  <div class="x-mat-message-wrapper">
+    <mat-icon class="x-mat-message-icon">{{ icon }}</mat-icon>
+    <div class="x-mat-message-labels">
+      <div *ngIf="label" class="x-mat-message-label">{{ label }}</div>
+      <div *ngIf="subLabel" class="x-mat-message-subLabel">{{ subLabel }}</div>
+    </div>
+    <ng-content select="[x-mat-message-actions]"></ng-content>
+  </div>
+</ng-template>

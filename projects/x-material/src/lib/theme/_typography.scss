@@ -1,0 +1,35 @@
+@import '../message/message-theme';
+
+@function x-mat-typography-config(
+  $font-family: '"Roboto", "Helvetica Neue", sans-serif',
+  $headline: x-mat-typography-level(24px, 32px, 400),
+  $title: x-mat-typography-level(20px, 32px, 500),
+  $subheading-2: x-mat-typography-level(16px, 28px, 400),
+  $subheading-1: x-mat-typography-level(15px, 24px, 400),
+  $body-2: x-mat-typography-level(14px, 24px, 500),
+  $body-1: x-mat-typography-level(14px, 20px, 400),
+  $caption: x-mat-typography-level(12px, 20px, 400)
+) {
+  @return (
+    font-family: $font-family,
+    headline: $headline,
+    title: $title,
+    subheading-2: $subheading-2,
+    subheading-1: $subheading-1,
+    body-2: $body-2,
+    body-1: $body-1,
+    caption: $caption
+  );
+}
+
+@mixin x-mat-typography($config: null) {
+  @if $config == null {
+    $config: x-mat-typography-config();
+  }
+
+  body {
+    font-family: x-mat-font-family($config);
+  }
+
+  @include x-mat-message-typography($config);
+}

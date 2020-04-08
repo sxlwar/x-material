@@ -1,11 +1,22 @@
 import { XMatBreadcrumbModule } from 'x-material/breadcrumb';
+import { XMatMessageModule } from 'x-material/message';
 import { XMatPasswordModule } from 'x-material/password';
 
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, Type } from '@angular/core';
+import { MatButtonModule, MatIconModule } from '@angular/material';
+
+const config: Type<any>[] = [
+  CommonModule,
+  XMatPasswordModule,
+  XMatBreadcrumbModule,
+  XMatMessageModule,
+  MatIconModule,
+  MatButtonModule,
+];
 
 @NgModule({
-  imports: [CommonModule, XMatPasswordModule, XMatBreadcrumbModule],
-  exports: [CommonModule, XMatPasswordModule, XMatBreadcrumbModule],
+  imports: [...config],
+  exports: [...config],
 })
 export class SharedModule {}

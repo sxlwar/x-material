@@ -1,36 +1,15 @@
-// bootstrap
-@import '~bootstrap/scss/bootstrap-grid';
-@import '~bootstrap/scss/mixins';
-@import '~bootstrap/scss/alert';
-@import '~bootstrap/scss/root';
-@import '~bootstrap/scss/buttons';
-@import '~bootstrap/scss/forms';
-@import '~bootstrap/scss/input-group';
-@import '~bootstrap/scss/utilities/display';
-@import '~bootstrap/scss/utilities/text';
-@import '~bootstrap/scss/utilities/spacing';
-@import '~bootstrap/scss/custom-forms';
-@import '~bootstrap/scss/card';
-
-legend {
-  margin-bottom: 20px;
-  font-size: 21px;
-  border-bottom: 1px solid #e5e5e5;
-}
-
 // material
 @import '~@angular/material/theming';
+@import '../../x-material/src/lib/theme/theme';
 
 @include mat-core();
+$demo-primary: mat-palette($mat-blue);
+$demo-accent: mat-palette($mat-cyan, A200, A100, A400); /* stylelint-disable-line value-keyword-case */
+$demo-warn: mat-palette($mat-red);
+$demo-theme: mat-light-theme($demo-primary, $demo-accent, $demo-warn);
 
-// Define a theme.
-$primary: mat-palette($mat-indigo);
-$accent: mat-palette($mat-pink, A200, A100, A400);
-
-$theme: mat-light-theme($primary, $accent);
-
-// Include all theme styles for the components.
-@include angular-material-theme($theme);
+@include angular-material-theme($demo-theme);
+@include x-mat-theme($demo-theme);
 
 pre {
   display: block;
@@ -49,5 +28,3 @@ pre {
 .active-link {
   color: #3f51b5 !important;
 }
-
-@import './markdown.css';

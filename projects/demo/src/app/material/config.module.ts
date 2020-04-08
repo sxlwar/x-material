@@ -4,23 +4,12 @@ import { RouterModule } from '@angular/router';
 
 import { SharedModule } from '../shared';
 import { BreadcrumbComponent } from './breadcrumb';
+import { routes } from './config';
+import { MessageComponent } from './message';
 import { PasswordComponent } from './password';
 
 @NgModule({
-  imports: [
-    ReactiveFormsModule,
-    SharedModule,
-    RouterModule.forChild([
-      {
-        path: 'password',
-        component: PasswordComponent,
-      },
-      {
-        path: 'breadcrumb',
-        component: BreadcrumbComponent,
-      },
-    ]),
-  ],
-  declarations: [BreadcrumbComponent, PasswordComponent],
+  imports: [ReactiveFormsModule, SharedModule, RouterModule.forChild(routes)],
+  declarations: [BreadcrumbComponent, MessageComponent, PasswordComponent],
 })
 export class ConfigModule {}
