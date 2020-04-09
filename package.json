@@ -6,7 +6,9 @@
     "start": "ng serve demo --open",
     "format": "prettier --config .prettier.config.js projects/x-formly/src/**/*.ts --write",
     "stylelint": "stylelint \"projects/**/*.scss\" --config .stylelint.config.js",
-    "build": "ng build",
+    "build": "npm run build:x-material && npm run build:theme",
+    "build:x-material": "ng build x-material",
+    "build:theme": "scss-bundle -c ./projects/x-material/scss-bundle.config.json",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
@@ -55,6 +57,7 @@
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "protractor": "~5.4.0",
+    "scss-bundle": "^3.1.1",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-recommended": "^3.0.0",
     "stylelint-config-standard": "^19.0.0",

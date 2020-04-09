@@ -1,6 +1,6 @@
 // material
 @import '~@angular/material/theming';
-@import '../../x-material/src/lib/theme/theme';
+@import '../../../dist/x-material/theme/theme';
 
 @include mat-core();
 $demo-primary: mat-palette($mat-blue);

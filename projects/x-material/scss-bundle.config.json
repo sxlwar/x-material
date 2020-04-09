@@ -1,0 +1,7 @@
+{
+  "bundlerOptions": {
+    "entryFile": "projects/x-material/src/lib/theme/_theme.scss",
+    "outFile": "dist/x-material/theme/_theme.scss",
+    "includePaths": ["src/lib/common/styles"]
+  }
+}
