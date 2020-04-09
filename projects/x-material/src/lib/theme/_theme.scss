@@ -1,3 +1,4 @@
+@import '../breadcrumb/breadcrumb-theme';
 @import '../message/message-theme';
 @import './typography';
 
@@ -5,4 +6,5 @@
 @mixin x-mat-theme($theme, $config: null) {
   @include x-mat-typography($config);
   @include x-mat-message-theme($theme);
+  @include x-mat-breadcrumb-theme($theme);
 }

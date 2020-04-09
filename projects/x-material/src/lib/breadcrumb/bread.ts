@@ -6,9 +6,8 @@ import {
   selector: 'x-mat-bread, a[x-mat-bread]',
   styleUrls: ['./bread.scss'],
   templateUrl: './bread.html',
-  /* tslint:disable-next-line */
   host: {
-    class: 'mat-button bread',
+    class: 'mat-button x-mat-bread',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

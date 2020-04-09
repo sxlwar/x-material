@@ -1,0 +1,10 @@
+@mixin x-mat-breadcrumb-theme($theme) {
+  $foreground: map-get($theme, foreground);
+
+  x-mat-bread {
+    &:last-of-type {
+      font-weight: bold;
+      cursor: default;
+    }
+  }
+}

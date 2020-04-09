@@ -1,1 +1,1 @@
-export { xMatCollapseAnimation } from './collapse.animation';
+export * from './collapse.animation';
