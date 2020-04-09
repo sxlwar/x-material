@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule, Type } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
-import { XMatMessageComponent, XMatMessageContainerDirective } from './message';
+import { XMatMessageComponent, XMatMessageContainerDirective } from './message.component';
 
 const XMat_MESSAGE: Type<any>[] = [XMatMessageComponent, XMatMessageContainerDirective];
 

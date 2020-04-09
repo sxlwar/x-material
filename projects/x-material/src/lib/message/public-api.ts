@@ -1,2 +1,2 @@
-export * from './message-module';
-export * from './message';
+export * from './message.module';
+export * from './message.component';

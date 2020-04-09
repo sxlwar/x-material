@@ -4,15 +4,19 @@ import { XMatPasswordModule } from 'x-material/password';
 
 import { CommonModule } from '@angular/common';
 import { NgModule, Type } from '@angular/core';
-import { MatButtonModule, MatIconModule } from '@angular/material';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule, MatIconModule, MatInputModule } from '@angular/material';
 
 const config: Type<any>[] = [
   CommonModule,
-  XMatPasswordModule,
+  FormsModule,
+  MatButtonModule,
+  MatIconModule,
+  MatInputModule,
+  ReactiveFormsModule,
   XMatBreadcrumbModule,
   XMatMessageModule,
-  MatIconModule,
-  MatButtonModule,
+  XMatPasswordModule,
 ];
 
 @NgModule({

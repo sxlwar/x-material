@@ -1,0 +1,86 @@
+<div class="">
+  <div class="">
+    <mat-form-field appearance="outline">
+      <mat-label>
+        Select Date
+      </mat-label>
+      <input
+        type="text"
+        xMatDateRangePicker
+        matInput
+        [(ngModel)]="selected"
+        class="form-control"
+        placeholder="Choose date"
+        [showDropdown]="true"
+        [lockStartDate]="false"
+        [customRangeDirection]="false"
+        (ngModelChange)="ngModelChange($event)"
+        (change)="change($event)"
+        showCancel="true"
+      />
+    </mat-form-field>
+  </div>
+  <div class="">
+    <br />
+    <button mat-raised-button color="primary" class="x-mat-date-range-picker-action" (click)="open($event)">
+      open from a button
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      *ngIf="selected && selected.startDate"
+      class="x-mat-date-range-picker-action"
+      (click)="clear($event)"
+    >
+      Clear
+    </button>
+  </div>
+</div>
+
+<!-- 
+<div class="row">
+  <div class="col s12">
+    <b>Using the change event :</b>
+    <pre class="prettyprint"><code class="html">&lt;input type="text" x-matdate-range-pickerMd
+[(ngModel)]="selected" placeholder="Choose date" (change)="change($event)"/&gt;</code>
+    </pre>
+
+    <b>Or with ngModel :</b>
+
+    <pre class="prettyprint"><code class="html">&lt;input type="text" x-matdate-range-pickerMd
+        [lockStartDate]="false"
+[(ngModel)]="selected" placeholder="Choose date"
+(ngModelChange)="ngModelChange($event)"/&gt;</code>
+    </pre>
+  </div>
+</div>
+<hr />
+<div class="row">
+  <div class="col s12">
+    <h3>Inline date-range-picker</h3>
+    <x-mat-date-range-picker
+      (selectedDate)="selectedDate($event)"
+      [locale]="{ applyLabel: 'Done', firstDay: 1 }"
+    ></x-mat-date-range-picker>
+    <br />
+    Selected date: {{ inlineDate | json }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <h3>Inline date-range-picker with time and auto-apply</h3>
+    <x-mat-date-range-picker
+      (selectedDate)="selectedDateTime($event)"
+      [autoApply]="true"
+      [timePicker24Hour]="true"
+      [linkedCalendars]="true"
+      [startDate]="selected.startDate"
+      [endDate]="selected.endDate"
+      [timePicker]="true"
+      [locale]="{ applyLabel: 'Done', firstDay: 1 }"
+    ></x-mat-date-range-picker>
+    <br />
+    <p>Selected date (after changes): {{ inlineDateTime | json }}</p>
+  </div>
+</div> -->

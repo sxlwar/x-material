@@ -14,8 +14,8 @@ export class XMatMessageContainerDirective {
 
 @Component({
   selector: 'x-mat-message',
-  templateUrl: './message.html',
-  styleUrls: ['./message.scss'],
+  templateUrl: './message.component.html',
+  styleUrls: ['./message.component.scss'],
   animations: [xMatCollapseAnimation],
 })
 export class XMatMessageComponent implements AfterViewInit {

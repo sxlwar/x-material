@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 
-import { BreadComponent } from './bread';
-import { BreadcrumbComponent } from './breadcrumb';
+import { BreadComponent } from './bread/bread.component';
+import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbService } from './breadcrumb.service';
 
 export function breadcrumbServiceFactory(router: Router) {

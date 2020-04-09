@@ -21,7 +21,7 @@ const _XMatPasswordBase = mixinDisabled(XMatPasswordBase);
 
 @Component({
   selector: 'x-mat-password',
-  templateUrl: './password.html',
+  templateUrl: './password.component.html',
   styles: [
     `
       mat-icon:hover {

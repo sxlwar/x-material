@@ -4,8 +4,8 @@ import {
 
 @Component({
   selector: 'x-mat-bread, a[x-mat-bread]',
-  styleUrls: ['./bread.scss'],
-  templateUrl: './bread.html',
+  styleUrls: ['./bread.component.scss'],
+  templateUrl: './bread.component.html',
   host: {
     class: 'mat-button x-mat-bread',
   },

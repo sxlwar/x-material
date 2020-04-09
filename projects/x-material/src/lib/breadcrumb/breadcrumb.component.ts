@@ -6,12 +6,12 @@ import {
     DoCheck, ElementRef, Input, OnDestroy, OnInit, QueryList
 } from '@angular/core';
 
-import { BreadComponent } from './bread';
+import { BreadComponent } from './bread/bread.component';
 
 @Component({
   selector: 'x-mat-breadcrumb',
-  templateUrl: './breadcrumb.html',
-  styleUrls: ['./breadcrumb.scss'],
+  templateUrl: './breadcrumb.component.html',
+  styleUrls: ['./breadcrumb.component.scss'],
   host: {
     class: 'breadcrumb',
   },
