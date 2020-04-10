@@ -1,0 +1,19 @@
+@import '../common/styles/theme-functions';
+
+@mixin x-mat-date-range-picker-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  .x-mat-date-range-picker {
+    td.in-range {
+      background-color: mat-color($accent, 0.1);
+    }
+    td.active {
+      background-color: mat-color($primary);
+      &:hover {
+        background-color: mat-color($primary);
+      }
+    }
+  }
+}

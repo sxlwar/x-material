@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve demo --open",
+    "start": "ng serve demo --open --port=4100",
     "format": "prettier --config .prettier.config.js projects/x-formly/src/**/*.ts --write",
     "stylelint": "stylelint \"projects/**/*.scss\" --config .stylelint.config.js",
     "build": "npm run build:x-material && npm run build:theme",

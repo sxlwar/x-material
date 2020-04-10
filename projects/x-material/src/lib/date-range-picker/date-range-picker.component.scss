@@ -15,7 +15,7 @@ $x-mat-picker-in-range-border-color: transparent !default;
 $x-mat-picker-in-range-bg-color: #dde2e4 !default;
 
 $x-mat-picker-active-color: #fff !default;
-$x-mat-picker-active-bg-color: #3f51b5 !default;
+// $x-mat-picker-active-bg-color: #3f51b5 !default; // setting by theme;
 $x-mat-picker-active-border-color: transparent !default;
 
 $x-mat-picker-unselected-color: #999 !default;
@@ -61,7 +61,7 @@ $select-radius: 2px !default;
 $input-height: 3rem !default;
 
 // styles below
-.x-mat-picker {
+.x-mat-date-range-picker {
   position: absolute;
   font-family: Roboto, sans-serif;
   color: $x-mat-picker-color;
@@ -145,7 +145,7 @@ $input-height: 3rem !default;
       transform-origin: 50%% 100%;
     }
     .calendar {
-      display: block;
+      display: inline-block;
     }
   }
   &.hidden {
@@ -180,6 +180,10 @@ $input-height: 3rem !default;
     .calendar {
       display: none;
     }
+  }
+
+  .calendar-container {
+    display: flex;
   }
 
   .calendar {
@@ -304,7 +308,6 @@ $input-height: 3rem !default;
     //
     // Date Range
     &.in-range {
-      background-color: $x-mat-picker-in-range-bg-color;
       border-color: $x-mat-picker-in-range-border-color;
       color: $x-mat-picker-in-range-color;
 
@@ -326,10 +329,8 @@ $input-height: 3rem !default;
 
     &.active {
       transition: background 300ms ease-out;
-      background: rgba(0, 0, 0, 0.1);
       &,
       &:hover {
-        background-color: $x-mat-picker-active-bg-color;
         border-color: $x-mat-picker-active-border-color;
         color: $x-mat-picker-active-color;
       }
@@ -367,18 +368,18 @@ $input-height: 3rem !default;
       border: $select-border;
       border-radius: $select-radius;
       height: $input-height;
-      &.monthselect,
-      &.yearselect {
+      &.month-select,
+      &.year-select {
         font-size: 12px;
         padding: 1px;
         height: auto;
         margin: 0;
         cursor: default;
       }
-      &.hourselect,
-      &.minuteselect,
-      &.secondselect,
-      &.ampmselect {
+      &.hour-select,
+      &.minute-select,
+      &.second-select,
+      &.am-pm-select {
         width: 50px;
         margin: 0 auto;
         background: #eee;
@@ -388,8 +389,8 @@ $input-height: 3rem !default;
         font-size: 12px;
       }
 
-      &.monthselect,
-      &.yearselect {
+      &.month-select,
+      &.year-select {
         cursor: pointer;
         opacity: 0;
         position: absolute;
@@ -557,6 +558,9 @@ $input-height: 3rem !default;
   .buttons {
     text-align: right;
     margin: 0 5px 5px 0;
+    [color='primary'] {
+      margin-left: 1em;
+    }
   }
   .btn {
     position: relative;
@@ -628,7 +632,7 @@ $input-height: 3rem !default;
 }
 
 @media (min-width: 564px) {
-  .x-mat-picker {
+  .x-mat-date-range-picker {
     width: auto;
 
     &.single {
@@ -741,7 +745,7 @@ $input-height: 3rem !default;
 }
 
 @media (min-width: 730px) {
-  .x-mat-picker {
+  .x-mat-date-range-picker {
     .ranges {
       width: auto;
     }
