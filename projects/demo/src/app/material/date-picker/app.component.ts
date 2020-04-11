@@ -1,7 +1,5 @@
-import moment from 'moment';
-import {
-    XMatDateRangePickerComponent, XMatDateRangePickerDirective
-} from 'x-material/date-range-picker';
+import moment, { Moment } from 'moment';
+import { XMatDatePickerComponent, XMatDatePickerDirective } from 'x-material/date-picker';
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 
@@ -11,15 +9,17 @@ import { Component, OnInit, ViewChild } from '@angular/core';
   styleUrls: [],
 })
 export class AppComponent implements OnInit {
-  selected: { startDate: moment.Moment; endDate: moment.Moment };
+  selected: { startDate: Moment; endDate: Moment };
 
-  @ViewChild(XMatDateRangePickerDirective, { static: true }) pickerDirective: XMatDateRangePickerDirective;
+  singleSelected = moment();
+
+  @ViewChild(XMatDatePickerDirective, { static: true }) pickerDirective: XMatDatePickerDirective;
 
   inlineDate: any;
 
   inlineDateTime: any;
 
-  picker: XMatDateRangePickerComponent;
+  picker: XMatDatePickerComponent;
 
   constructor() {
     this.selected = {

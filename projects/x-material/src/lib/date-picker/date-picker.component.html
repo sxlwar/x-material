@@ -1,5 +1,5 @@
 <div
-  class="x-mat-date-range-picker"
+  class="x-mat-date-picker"
   #pickerContainer
   [ngClass]="{
     ltr: locale.direction === 'ltr',
@@ -7,7 +7,7 @@
     shown: isShown || inline,
     hidden: !isShown && !inline,
     inline: inline,
-    double: !singleDatePicker && showCalInRanges,
+    double: isRangePicker && showCalInRanges,
     'show-ranges': rangesArray.length
   }"
   [class]="'drops-' + drops + '-' + opens"
@@ -27,7 +27,7 @@
     </ul>
   </div>
   <div class="calendar-container">
-    <div class="calendar" [ngClass]="{ right: singleDatePicker, left: !singleDatePicker }" *ngIf="showCalInRanges">
+    <div class="calendar" [ngClass]="{ right: !isRangePicker, left: isRangePicker }" *ngIf="showCalInRanges">
       <div class="calendar-table">
         <table class="table-condensed" *ngIf="calendarVariables">
           <thead>
@@ -92,7 +92,7 @@
                 *ngIf="
                   (!calendarVariables.left.maxDate ||
                     calendarVariables.left.maxDate.isAfter(calendarVariables.left.calendar.lastDay)) &&
-                  (!linkedCalendars || singleDatePicker)
+                  (!linkedCalendars || !isRangePicker)
                 "
               >
                 <th class="next available" (click)="clickNext(sideEnum.left)"></th>
@@ -102,7 +102,7 @@
                   !(
                     (!calendarVariables.left.maxDate ||
                       calendarVariables.left.maxDate.isAfter(calendarVariables.left.calendar.lastDay)) &&
-                    (!linkedCalendars || singleDatePicker)
+                    (!linkedCalendars || !isRangePicker)
                   )
                 "
               >
@@ -209,7 +209,7 @@
         </div>
       </div>
     </div>
-    <div class="calendar right" *ngIf="showCalInRanges && !singleDatePicker">
+    <div class="calendar right" *ngIf="showCalInRanges && isRangePicker">
       <div class="calendar-table">
         <table class="table-condensed" *ngIf="calendarVariables">
           <thead>
@@ -275,7 +275,7 @@
                 *ngIf="
                   !calendarVariables.right.maxDate ||
                   (calendarVariables.right.maxDate.isAfter(calendarVariables.right.calendar.lastDay) &&
-                    (!linkedCalendars || singleDatePicker || true))
+                    (!linkedCalendars || !isRangePicker || true))
                 "
               >
                 <th class="next available" (click)="clickNext(sideEnum.right)"></th>
@@ -285,7 +285,7 @@
                   !(
                     !calendarVariables.right.maxDate ||
                     (calendarVariables.right.maxDate.isAfter(calendarVariables.right.calendar.lastDay) &&
-                      (!linkedCalendars || singleDatePicker || true))
+                      (!linkedCalendars || !isRangePicker || true))
                   )
                 "
               >
@@ -394,7 +394,7 @@
       </div>
     </div>
   </div>
-  <div class="buttons" *ngIf="!autoApply && (!rangesArray.length || (showCalInRanges && !singleDatePicker))">
+  <div class="buttons" *ngIf="!autoApply && (!rangesArray.length || (showCalInRanges && isRangePicker))">
     <div class="buttons_input">
       <button
         *ngIf="showClearButton"

@@ -1,11 +1,11 @@
 @import '../common/styles/theme-functions';
 
-@mixin x-mat-date-range-picker-theme($theme) {
+@mixin x-mat-date-picker-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
 
-  .x-mat-date-range-picker {
+  .x-mat-date-picker {
     td.in-range {
       background-color: mat-color($accent, 0.1);
     }

@@ -61,7 +61,7 @@ $select-radius: 2px !default;
 $input-height: 3rem !default;
 
 // styles below
-.x-mat-date-range-picker {
+.x-mat-date-picker {
   position: absolute;
   font-family: Roboto, sans-serif;
   color: $x-mat-picker-color;
@@ -632,7 +632,7 @@ $input-height: 3rem !default;
 }
 
 @media (min-width: 564px) {
-  .x-mat-date-range-picker {
+  .x-mat-date-picker {
     width: auto;
 
     &.single {
@@ -745,7 +745,7 @@ $input-height: 3rem !default;
 }
 
 @media (min-width: 730px) {
-  .x-mat-date-range-picker {
+  .x-mat-date-picker {
     .ranges {
       width: auto;
     }

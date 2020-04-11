@@ -1,4 +1,4 @@
-import moment, { Moment } from 'moment';
+import moment, { DurationInputArg1, Moment } from 'moment';
 
 import {
     ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output,
@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { LocaleConfig } from './date-range-picker.config';
+import { LocaleConfig } from './date-picker.config';
 import { LocaleService } from './locale.service';
 
 export enum SideEnum {
@@ -14,10 +14,20 @@ export enum SideEnum {
   right = 'right',
 }
 
+export interface Ranges {
+  [key: string]: [Moment, Moment];
+}
+
+export interface XMatSelectedDate {
+  chosenLabel: string;
+  startDate: Moment;
+  endDate: Moment;
+}
+
 @Component({
-  selector: 'x-mat-date-range-picker',
-  styleUrls: ['./date-range-picker.component.scss'],
-  templateUrl: './date-range-picker.component.html',
+  selector: 'x-mat-date-picker',
+  styleUrls: ['./date-picker.component.scss'],
+  templateUrl: './date-picker.component.html',
   host: {
     '(click)': 'handleInternalClick($event)',
   },
@@ -25,19 +35,249 @@ export enum SideEnum {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => XMatDateRangePickerComponent),
+      useExisting: forwardRef(() => XMatDatePickerComponent),
       multi: true,
     },
   ],
 })
-export class XMatDateRangePickerComponent implements OnInit {
-  private _old: { start: any; end: any } = { start: null, end: null };
+export class XMatDatePickerComponent implements OnInit {
+  @Input() startDate = moment().startOf('day');
+
+  @Input() endDate = moment().endOf('day');
+
+  /**
+   * @description set max number of the date we can choose
+   */
+  @Input() dateLimit: number = null;
+
+  /**
+   * @description minimal date
+   */
+  @Input() minDate: Moment = null;
+
+  /**
+   * @description maximal date
+   */
+  @Input() maxDate: Moment = null;
+
+  @Input() autoApply: boolean = false;
+
+  /**
+   * @description is single date picker mode
+   */
+  @Input() isRangePicker: boolean = false;
+
+  /**
+   * @description enable to use clear button
+   */
+  @Input() showClearButton: boolean = false;
+
+  @Input() showDropdown: boolean = false;
+
+  @Input() showWeekNumbers: boolean = false;
+
+  @Input() showISOWeekNumbers: boolean = false;
+
+  @Input() showCancel = false;
+
+  @Input() linkedCalendars: boolean = false;
+
+  @Input() autoUpdateInput: boolean = true;
+
+  @Input() maxSpan: DurationInputArg1 = null;
+
+  /**
+   * @description set to enable timer picker;
+   */
+  @Input() timePicker: boolean = false;
+
+  /**
+   * @description set to true if you want to set the time picker to 24h instead of having AM and PM
+   * Available only if timePicker is set to true
+   */
+  @Input() timePicker24Hour: boolean = false;
+
+  /**
+   * @description set the value increment of the minutes
+   * Available only if timePicker is set to true
+   */
+  @Input() timePickerIncrement = 1;
+
+  /**
+   * @description set true if you want do display second's select
+   * Available only if timePicker is set to true
+   */
+  @Input() timePickerSeconds: boolean = false;
+
+  /**
+   * @description add a custom class for all first day of the month
+   */
+  @Input() firstMonthDayClass: string = null;
+
+  /**
+   * @description add a custom class for all last day of the month
+   */
+  @Input() lastMonthDayClass: string = null;
+
+  /**
+   * @description add a custom class for all date in a week not in the current month
+   */
+  @Input() emptyWeekRowClass: string = null;
+
+  /**
+   * @description add a custom class for the first day of the next month
+   */
+  @Input() firstDayOfNextMonthClass: string = null;
+
+  /**
+   * @description add a custom class for the last day of the previous month
+   */
+  @Input() lastDayOfPreviousMonthClass: string = null;
+
+  /**
+   * @param date Moment
+   * @return default is false means all dates are valid.
+   * @description A function that is passed each date in calendar(or calendars at date range picker mode) before they are displayed,
+   * and may return true or false to indicate whether that date should be available for selection or not.
+   */
+  @Input()
+  isInvalidDate(_: Moment): boolean {
+    return false;
+  }
+
+  /**
+   * @param date Moment
+   * @returns false: do nothing; string or string[]: add custom css class(classes) to the date
+   * @description A function that is passed each date in the calendars before they are displayed,
+   * and may return a string or array of CSS class names to apply to that date's calendar cell
+   */
+  @Input()
+  isCustomDate(_: Moment): false | string | string[] {
+    return false;
+  }
+
+  /**
+   * @param date Moment
+   * @returns text tooltip message; default is null;
+   * @description A function that is passed each date in the two calendars before they are displayed,
+   * and may return a text to be displayed as a tooltip.
+   */
+  @Input()
+  addTooltipForDate(_: Moment): string {
+    return null;
+  }
+
+  /**
+   * @description locale config object
+   */
+  @Input() set locale(value: LocaleConfig) {
+    this._locale = { ...this._localeService.config, ...value };
+  }
+
+  get locale(): LocaleConfig {
+    return this._locale;
+  }
+
+  /**
+   * @description Set predefined date ranges the user can select from.
+   * Each key is the label for the range, and its value an array with two dates representing the bounds of the range
+   *
+   * @example
+   * ```ts
+   * const ranges: Ranges = {
+   *  'Today': [moment(), moment()],
+   *  'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+   *  'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+   *  'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+   *  'This Month': [moment().startOf('month'), moment().endOf('month')],
+   *  'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+   * }
+   * ```
+   */
+  @Input() set ranges(value) {
+    this._ranges = value;
+    this.renderRanges();
+  }
+
+  get ranges(): any {
+    return this._ranges;
+  }
+
+  /**
+   * @description set to true if you want to display the ranges with the calendar.
+   * Available only if the ranges is set.
+   */
+  @Input() alwaysShowCalendars = false;
+
+  /**
+   * @description set to true if you want the calendar won't be closed after choosing a range
+   * Available only if the ranges is set.
+   */
+  @Input() keepCalendarOpeningWithRange = false;
+
+  /**
+   * @description set to true if you want to display the range label on input
+   * Available only if the ranges is set.
+   */
+  @Input() showRangeLabelOnInput = false;
+
+  /**
+   * @description set to true if you want to allow selection range from end date first
+   * Available only if the ranges is set.
+   */
+  @Input() customRangeDirection = false;
+
+  /**
+   * @description set to true if you want to lock start date and change only the end date
+   * Available only if the ranges is set.
+   */
+  @Input() lockStartDate = false;
+
+  @Input() showCustomRangeLabel: boolean;
+
+  /**
+   * @description position the calendar to the up or down form the input element;
+   */
+  @Input() drops: 'up' | 'down' = 'down';
+
+  /**
+   * @description position the calendar form the input element;
+   */
+  @Input() opens: 'left' | 'center' | 'right' | 'auto' = 'auto';
+
+  @Input() closeOnAutoApply = true;
+
+  @Output() selectedDate: EventEmitter<XMatSelectedDate> = new EventEmitter();
+
+  /**
+   * @description Fired when clicked on range, and send an object with range label and dates value
+   */
+  @Output() rangeClicked: EventEmitter<{ label: string; dates: [Moment, Moment] }> = new EventEmitter();
+
+  /**
+   * @description Fires when the date model is updated, like applying (if you have activated the apply button),
+   * or when selecting a range or date without the apply button, and sends an object containing start and end date,
+   * eg: { startDate: Moment, endDate: Moment }
+   */
+  @Output() datesUpdated: EventEmitter<Object> = new EventEmitter();
+
+  @Output() startDateChanged: EventEmitter<Object> = new EventEmitter();
+
+  @Output() endDateChanged: EventEmitter<Object> = new EventEmitter();
+
+  /**
+   * @ignore
+   */
+  @ViewChild('pickerContainer', { static: true }) pickerContainer: ElementRef;
 
   chosenLabel: string;
 
   calendarVariables: { left: any; right: any } = { left: {}, right: {} };
 
-  toolTipText = []; // for storing tool tip text
+  /**
+   * @description for storing tool tip text
+   */
+  toolTipText: string[] = [];
 
   timePickerVariables: { left: any; right: any } = { left: {}, right: {} };
 
@@ -45,129 +285,48 @@ export class XMatDateRangePickerComponent implements OnInit {
 
   applyBtn: { disabled: boolean } = { disabled: false };
 
-  @Input()
-  startDate = moment().startOf('day');
-
-  @Input()
-  endDate = moment().endOf('day');
-
-  @Input()
-  dateLimit: number = null;
-
   // used in template for compile time support of enum values.
   sideEnum = SideEnum;
 
-  @Input()
-  minDate: Moment = null;
-
-  @Input()
-  maxDate: Moment = null;
-
-  @Input()
-  autoApply: Boolean = false;
-  @Input()
-  singleDatePicker: Boolean = false;
-  @Input()
-  showDropdown: Boolean = false;
-  @Input()
-  showWeekNumbers: Boolean = false;
-  @Input()
-  showISOWeekNumbers: Boolean = false;
-  @Input()
-  linkedCalendars: Boolean = false;
-  @Input()
-  autoUpdateInput: Boolean = true;
-  @Input()
-  alwaysShowCalendars: Boolean = false;
-  @Input()
-  maxSpan: Boolean = false;
-  @Input()
-  lockStartDate: Boolean = false;
-  // time picker variables
-  @Input()
-  timePicker: Boolean = false;
-  @Input()
-  timePicker24Hour: Boolean = false;
-  @Input()
-  timePickerIncrement = 1;
-  @Input()
-  timePickerSeconds: Boolean = false;
-  // end of time picker variables
-  @Input()
-  showClearButton: Boolean = false;
-  @Input()
-  firstMonthDayClass: string = null;
-  @Input()
-  lastMonthDayClass: string = null;
-  @Input()
-  emptyWeekRowClass: string = null;
-  @Input()
-  firstDayOfNextMonthClass: string = null;
-  @Input()
-  lastDayOfPreviousMonthClass: string = null;
-
-  _locale: LocaleConfig = {};
-  @Input() set locale(value) {
-    this._locale = { ...this._localeService.config, ...value };
-  }
-  get locale(): any {
-    return this._locale;
-  }
-  // custom ranges
-  _ranges: any = {};
-
-  @Input() set ranges(value) {
-    this._ranges = value;
-    this.renderRanges();
-  }
-  get ranges(): any {
-    return this._ranges;
-  }
-
-  @Input()
-  showCustomRangeLabel: boolean;
-  @Input()
-  showCancel = false;
-  @Input()
-  keepCalendarOpeningWithRange = false;
-  @Input()
-  showRangeLabelOnInput = false;
-  @Input()
-  customRangeDirection = false;
   chosenRange: string;
+
   rangesArray: Array<any> = [];
 
   // some state information
-  isShown: Boolean = false;
-  inline = true;
-  leftCalendar: any = {};
-  rightCalendar: any = {};
-  showCalInRanges: Boolean = false;
-  nowHoveredDate = null;
-  pickingDate: boolean = false;
-  options: any = {}; // should get some opt from user
-  @Input() drops: string;
-  @Input() opens: string;
-  @Input() closeOnAutoApply = true;
-  @Output() selectedDate: EventEmitter<Object>;
-  @Output() rangeClicked: EventEmitter<Object>;
-  @Output() datesUpdated: EventEmitter<Object>;
-  @Output() startDateChanged: EventEmitter<Object>;
-  @Output() endDateChanged: EventEmitter<Object>;
-  @ViewChild('pickerContainer', { static: true }) pickerContainer: ElementRef;
+  isShown: boolean = false;
 
-  constructor(private el: ElementRef, private _ref: ChangeDetectorRef, private _localeService: LocaleService) {
-    this.selectedDate = new EventEmitter();
-    this.rangeClicked = new EventEmitter();
-    this.datesUpdated = new EventEmitter();
-    this.startDateChanged = new EventEmitter();
-    this.endDateChanged = new EventEmitter();
-  }
+  inline = true;
+
+  leftCalendar: any = {};
+
+  rightCalendar: any = {};
+
+  showCalInRanges: boolean = false;
+
+  nowHoveredDate = null;
+
+  pickingDate: boolean = false;
+
+  /**
+   * should get some options from user;
+   */
+  options: any = {};
+
+  _ranges: Ranges = {};
+
+  _locale: LocaleConfig = {};
+
+  private _old: { start: Moment; end: Moment } = { start: null, end: null };
+
+  constructor(private _ref: ChangeDetectorRef, private _localeService: LocaleService) {}
 
   ngOnInit() {
     this._buildLocale();
+
     const daysOfWeek = [...this.locale.daysOfWeek];
+
     this.locale.firstDay = this.locale.firstDay % 7;
+
     if (this.locale.firstDay !== 0) {
       let iterator = this.locale.firstDay;
 
@@ -176,7 +335,9 @@ export class XMatDateRangePickerComponent implements OnInit {
         iterator--;
       }
     }
+
     this.locale.daysOfWeek = daysOfWeek;
+
     if (this.inline) {
       this._old.start = this.startDate.clone();
       this._old.end = this.endDate.clone();
@@ -197,9 +358,13 @@ export class XMatDateRangePickerComponent implements OnInit {
     this.renderCalendar(SideEnum.right);
     this.renderRanges();
   }
+
   renderRanges() {
     this.rangesArray = [];
-    let start, end;
+
+    let start: Moment;
+    let end: Moment;
+
     if (typeof this.ranges === 'object') {
       for (const range in this.ranges) {
         if (this.ranges[range]) {
@@ -535,7 +700,11 @@ export class XMatDateRangePickerComponent implements OnInit {
 
     this._buildCells(calendar, side);
   }
-  setStartDate(startDate) {
+
+  /**
+   * @ignore
+   */
+  setStartDate(startDate: string | Moment): void {
     if (typeof startDate === 'string') {
       this.startDate = moment(startDate, this.locale.format);
     }
@@ -544,6 +713,7 @@ export class XMatDateRangePickerComponent implements OnInit {
       this.pickingDate = true;
       this.startDate = moment(startDate);
     }
+
     if (!this.timePicker) {
       this.pickingDate = true;
       this.startDate = this.startDate.startOf('day');
@@ -578,7 +748,10 @@ export class XMatDateRangePickerComponent implements OnInit {
     this.updateMonthsInView();
   }
 
-  setEndDate(endDate) {
+  /**
+   * @ignore
+   */
+  setEndDate(endDate: string | Moment) {
     if (typeof endDate === 'string') {
       this.endDate = moment(endDate, this.locale.format);
     }
@@ -587,6 +760,7 @@ export class XMatDateRangePickerComponent implements OnInit {
       this.pickingDate = false;
       this.endDate = moment(endDate);
     }
+
     if (!this.timePicker) {
       this.pickingDate = false;
       this.endDate = this.endDate
@@ -620,20 +794,9 @@ export class XMatDateRangePickerComponent implements OnInit {
     if (!this.isShown) {
       // this.updateElement();
     }
+
     this.endDateChanged.emit({ endDate: this.endDate });
     this.updateMonthsInView();
-  }
-  @Input()
-  isInvalidDate(date) {
-    return false;
-  }
-  @Input()
-  isCustomDate(date) {
-    return false;
-  }
-  @Input()
-  isTooltipDate(date): string {
-    return null;
   }
 
   updateView() {
@@ -649,7 +812,7 @@ export class XMatDateRangePickerComponent implements OnInit {
     if (this.endDate) {
       // if both dates are visible already, do nothing
       if (
-        !this.singleDatePicker &&
+        this.isRangePicker &&
         this.leftCalendar.month &&
         this.rightCalendar.month &&
         ((this.startDate &&
@@ -689,7 +852,7 @@ export class XMatDateRangePickerComponent implements OnInit {
           .add(1, 'month');
       }
     }
-    if (this.maxDate && this.linkedCalendars && !this.singleDatePicker && this.rightCalendar.month > this.maxDate) {
+    if (this.maxDate && this.linkedCalendars && this.isRangePicker && this.rightCalendar.month > this.maxDate) {
       this.rightCalendar.month = this.maxDate.clone().date(2);
       this.leftCalendar.month = this.maxDate
         .clone()
@@ -711,7 +874,7 @@ export class XMatDateRangePickerComponent implements OnInit {
   }
   updateElement() {
     const format = this.locale.displayFormat ? this.locale.displayFormat : this.locale.format;
-    if (!this.singleDatePicker && this.autoUpdateInput) {
+    if (this.isRangePicker && this.autoUpdateInput) {
       if (this.startDate && this.endDate) {
         // if we use ranges and should show range label on input
         if (
@@ -784,42 +947,50 @@ export class XMatDateRangePickerComponent implements OnInit {
     this.updateElement();
   }
 
-  clickApply(e?) {
-    if (!this.singleDatePicker && this.startDate && !this.endDate) {
+  clickApply(event?: Event) {
+    if (this.isRangePicker && this.startDate && !this.endDate) {
       this.endDate = this._getDateWithTime(this.startDate, SideEnum.right);
 
       this.calculateChosenLabel();
     }
+
     if (this.isInvalidDate && this.startDate && this.endDate) {
       // get if there are invalid date between range
       const d = this.startDate.clone();
+
       while (d.isBefore(this.endDate)) {
         if (this.isInvalidDate(d)) {
           this.endDate = d.subtract(1, 'days');
           this.calculateChosenLabel();
           break;
         }
+
         d.add(1, 'days');
       }
     }
+
     if (this.chosenLabel) {
       this.selectedDate.emit({ chosenLabel: this.chosenLabel, startDate: this.startDate, endDate: this.endDate });
     }
 
     this.datesUpdated.emit({ startDate: this.startDate, endDate: this.endDate });
-    if (e || (this.closeOnAutoApply && !e)) {
+
+    if (event || (this.closeOnAutoApply && !event)) {
       this.hide();
     }
   }
 
-  clickCancel(e) {
+  clickCancel(_?: Event) {
     this.startDate = this._old.start;
     this.endDate = this._old.end;
+
     if (this.inline) {
       this.updateView();
     }
+
     this.hide();
   }
+
   /**
    * called when month is changed
    * @param monthEvent get value in event.target.value
@@ -830,6 +1001,7 @@ export class XMatDateRangePickerComponent implements OnInit {
     const month = parseInt(monthEvent.target.value, 10);
     this.monthOrYearChanged(month, year, side);
   }
+
   /**
    * called when year is changed
    * @param yearEvent get value in event.target.value
@@ -840,6 +1012,7 @@ export class XMatDateRangePickerComponent implements OnInit {
     const year = parseInt(yearEvent.target.value, 10);
     this.monthOrYearChanged(month, year, side);
   }
+
   /**
    * called when time is changed
    * @param timeEvent  an event
@@ -866,7 +1039,7 @@ export class XMatDateRangePickerComponent implements OnInit {
       start.minute(minute);
       start.second(second);
       this.setStartDate(start);
-      if (this.singleDatePicker) {
+      if (!this.isRangePicker) {
         this.endDate = this.startDate.clone();
       } else if (
         this.endDate &&
@@ -985,17 +1158,20 @@ export class XMatDateRangePickerComponent implements OnInit {
    * @param row row position of the current date clicked
    * @param col col position of the current date clicked
    */
-  hoverDate(e, side: SideEnum, row: number, col: number) {
+  hoverDate(event: Event, side: SideEnum, row: number, col: number) {
     const leftCalDate = this.calendarVariables.left.calendar[row][col];
     const rightCalDate = this.calendarVariables.right.calendar[row][col];
+
     if (this.pickingDate) {
       this.nowHoveredDate = side === SideEnum.left ? leftCalDate : rightCalDate;
       this.renderCalendar(SideEnum.left);
       this.renderCalendar(SideEnum.right);
     }
+
     const tooltip = side === SideEnum.left ? this.toolTipText[leftCalDate] : this.toolTipText[rightCalDate];
+
     if (tooltip.length > 0) {
-      e.target.setAttribute('title', tooltip);
+      (<HTMLTableDataCellElement>event.target).setAttribute('title', tooltip);
     }
   }
   /**
@@ -1053,7 +1229,7 @@ export class XMatDateRangePickerComponent implements OnInit {
       }
     }
 
-    if (this.singleDatePicker) {
+    if (!this.isRangePicker) {
       this.setEndDate(this.startDate);
       this.updateElement();
       if (this.autoApply) {
@@ -1070,25 +1246,28 @@ export class XMatDateRangePickerComponent implements OnInit {
     // This is to cancel the blur event handler if the mouse was in one of the inputs
     e.stopPropagation();
   }
+
   /**
    *  Click on the custom range
-   * @param e: Event
-   * @param label
    */
-  clickRange(e, label) {
+  clickRange(_: Event, label: string) {
     this.chosenRange = label;
+
     if (label === this.locale.customRangeLabel) {
       this.isShown = true; // show calendars
       this.showCalInRanges = true;
     } else {
-      const dates = this.ranges[label];
+      const dates: [Moment, Moment] = this.ranges[label];
+
       this.startDate = dates[0].clone();
       this.endDate = dates[1].clone();
+
       if (this.showRangeLabelOnInput && label !== this.locale.customRangeLabel) {
         this.chosenLabel = label;
       } else {
         this.calculateChosenLabel();
       }
+
       this.showCalInRanges = !this.rangesArray.length || this.alwaysShowCalendars;
 
       if (!this.timePicker) {
@@ -1099,13 +1278,16 @@ export class XMatDateRangePickerComponent implements OnInit {
       if (!this.alwaysShowCalendars) {
         this.isShown = false; // hide calendars
       }
+
       this.rangeClicked.emit({ label: label, dates: dates });
+
       if (!this.keepCalendarOpeningWithRange || this.autoApply) {
         this.clickApply();
       } else {
         if (!this.alwaysShowCalendars) {
           return this.clickApply();
         }
+
         if (this.maxDate && this.maxDate.isSame(dates[0], 'month')) {
           this.rightCalendar.month.month(dates[0].month());
           this.rightCalendar.month.year(dates[0].year());
@@ -1116,10 +1298,13 @@ export class XMatDateRangePickerComponent implements OnInit {
           this.leftCalendar.month.year(dates[0].year());
           // get the next year
           const nextMonth = dates[0].clone().add(1, 'month');
+
           this.rightCalendar.month.month(nextMonth.month());
           this.rightCalendar.month.year(nextMonth.year());
         }
+
         this.updateCalendars();
+
         if (this.timePicker) {
           this.renderTimePicker(SideEnum.left);
           this.renderTimePicker(SideEnum.right);
@@ -1128,20 +1313,22 @@ export class XMatDateRangePickerComponent implements OnInit {
     }
   }
 
-  show(e?) {
+  show(_?: Event): void {
     if (this.isShown) {
       return;
     }
+
     this._old.start = this.startDate.clone();
     this._old.end = this.endDate.clone();
     this.isShown = true;
     this.updateView();
   }
 
-  hide(e?) {
+  hide(_?: Event) {
     if (!this.isShown) {
       return;
     }
+
     // incomplete date selection, revert to last values
     if (!this.endDate) {
       if (this._old.start) {
@@ -1355,12 +1542,12 @@ export class XMatDateRangePickerComponent implements OnInit {
           }
         }
         // apply custom tooltip for this date
-        const isTooltip = this.isTooltipDate(calendar[row][col]);
+        const isTooltip = this.addTooltipForDate(calendar[row][col]);
         if (isTooltip) {
           if (typeof isTooltip === 'string') {
             this.toolTipText[calendar[row][col]] = isTooltip; // setting toolTipText for custom date
           } else {
-            this.toolTipText[calendar[row][col]] = 'Put the tooltip as the returned value of isTooltipDate';
+            this.toolTipText[calendar[row][col]] = 'Put the tooltip as the returned value of addTooltipForDate';
           }
         } else {
           this.toolTipText[calendar[row][col]] = '';

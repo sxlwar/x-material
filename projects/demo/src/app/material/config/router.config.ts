@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { BreadcrumbComponent } from '../breadcrumb';
-import { DateRangePickerComponent } from '../date-range-picker';
+import { DatePickerComponent } from '../date-picker';
 import { MessageComponent } from '../message';
 import { PasswordComponent } from '../password';
 
@@ -19,7 +19,7 @@ export const routes: Routes = [
     component: MessageComponent,
   },
   {
-    path: 'date-range-picker',
-    component: DateRangePickerComponent,
+    path: 'date-picker',
+    component: DatePickerComponent,
   },
 ];

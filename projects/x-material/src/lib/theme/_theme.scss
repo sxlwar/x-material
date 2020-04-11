@@ -1,6 +1,6 @@
 @import '../breadcrumb/breadcrumb.theme';
 @import '../message/message.theme';
-@import '../date-range-picker/date-range-picker.theme';
+@import '../date-picker/date-picker.theme';
 @import './typography';
 
 // Create a theme.
@@ -8,5 +8,5 @@
   @include x-mat-typography($config);
   @include x-mat-message-theme($theme);
   @include x-mat-breadcrumb-theme($theme);
-  @include x-mat-date-range-picker-theme($theme);
+  @include x-mat-date-picker-theme($theme);
 }
