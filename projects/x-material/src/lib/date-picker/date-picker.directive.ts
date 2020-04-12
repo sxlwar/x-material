@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { Ranges, XMatDatePickerComponent } from './date-picker.component';
-import { LocaleConfig } from './date-picker.config';
+import { XMatDatePickerComponent } from './date-picker.component';
+import { LocaleConfig, Ranges } from './date-picker.config';
 import { LocaleService } from './locale.service';
 
 type ModelValue =
@@ -78,7 +78,7 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
    * }
    * ```
    */
-  @Input() ranges: Ranges;
+  @Input() ranges: Ranges | true;
 
   /**
    * @description set to true if you want to display the ranges with the calendar.
@@ -411,7 +411,7 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
       containerTop = 'auto';
     }
 
-    if (this.opens === 'left') {
+    if (this.opens === 'right') {
       style = {
         top: containerTop,
         left: element.offsetLeft - container.clientWidth + element.clientWidth + 'px',
@@ -423,7 +423,7 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
         left: element.offsetLeft + element.clientWidth / 2 - container.clientWidth / 2 + 'px',
         right: 'auto',
       };
-    } else if (this.opens === 'right') {
+    } else if (this.opens === 'left') {
       style = {
         top: containerTop,
         left: element.offsetLeft + 'px',

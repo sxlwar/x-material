@@ -14,19 +14,22 @@ export interface Breadcrumb {
 
 @Injectable()
 export class BreadcrumbService {
+  /**
+   * @description emit breadcrumb change event
+   */
   breadcrumbChanged: BehaviorSubject<Breadcrumb[] | null> = new BehaviorSubject<Breadcrumb[]>(null);
 
   private breadcrumbs: Breadcrumb[] = [];
 
   constructor(private router: Router) {
-    this.router.events.subscribe((routeEvent) => {
+    this.router.events.subscribe(routeEvent => {
       this.onRouteEvent(routeEvent);
     });
   }
 
   changeBreadcrumb(route: ActivatedRouteSnapshot, name: string) {
     const rootUrl = this.createRootUrl(route);
-    const breadcrumb = this.breadcrumbs.find(function (bc) {
+    const breadcrumb = this.breadcrumbs.find(function(bc) {
       return bc.url === rootUrl;
     });
 

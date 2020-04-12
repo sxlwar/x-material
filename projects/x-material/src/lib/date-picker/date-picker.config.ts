@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { InjectionToken } from '@angular/core';
 
@@ -22,10 +22,14 @@ export interface LocaleConfig {
   weekLabel?: string;
 }
 
+export interface Ranges {
+  [key: string]: [Moment | string, Moment | string];
+}
+
 /**
- *  DefaultLocaleConfig
+ *  defaultLocaleConfig
  */
-export const DefaultLocaleConfig: LocaleConfig = {
+export const defaultLocaleConfig: LocaleConfig = {
   applyLabel: 'Apply',
   cancelLabel: 'Cancel',
   clearLabel: 'Clear',
@@ -36,4 +40,20 @@ export const DefaultLocaleConfig: LocaleConfig = {
   monthNames: moment.monthsShort(),
   separator: ' - ',
   weekLabel: 'W',
+};
+
+export const defaultRangesConfig: Ranges = {
+  Today: [moment(), moment()],
+  Yesterday: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+  'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+  'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+  'This Month': [moment().startOf('month'), moment().endOf('month')],
+  'Last Month': [
+    moment()
+      .subtract(1, 'month')
+      .startOf('month'),
+    moment()
+      .subtract(1, 'month')
+      .endOf('month'),
+  ],
 };

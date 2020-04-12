@@ -1,50 +1,51 @@
-<div class="">
+<div>
   <h4>Date Range Picker</h4>
 
-  <div class="">
-    <mat-form-field appearance="outline" style="display: block;">
-      <mat-label>
-        Select Date
-      </mat-label>
-      <input
-        type="text"
-        xMatDatePicker
-        matInput
-        [(ngModel)]="selected"
-        class="form-control"
-        placeholder="Choose date"
-        [showDropdown]="true"
-        [lockStartDate]="false"
-        [customRangeDirection]="false"
-        (ngModelChange)="ngModelChange($event)"
-        (change)="change($event)"
-        showCancel="true"
-        [isRangePicker]="true"
-        [locale]="{
-          applyLabel: '确定',
-          cancelLabel: '取消',
-          daysOfWeek: ['一', '二', '三', '四', '五', '六', '日'],
-          monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-          firstDay: 7
-        }"
-      />
-    </mat-form-field>
-  </div>
-  <div class="">
-    <br />
-    <button mat-raised-button color="primary" class="x-mat-date-picker-action" (click)="open($event)">
-      open from a button
-    </button>
-    <button
-      mat-raised-button
-      color="warn"
-      *ngIf="selected && selected.startDate"
-      class="x-mat-date-picker-action"
-      (click)="clear($event)"
-    >
-      Clear
-    </button>
-  </div>
+  <mat-form-field appearance="outline" style="display: block;">
+    <mat-label>
+      Select Date
+    </mat-label>
+    <input
+      type="text"
+      xMatDatePicker
+      matInput
+      [(ngModel)]="selected"
+      class="form-control"
+      placeholder="Choose date"
+      [showDropdown]="true"
+      [lockStartDate]="false"
+      [customRangeDirection]="false"
+      (ngModelChange)="ngModelChange($event)"
+      (change)="change($event)"
+      showCancel="true"
+      [showClearButton]="true"
+      [isRangePicker]="true"
+      [ranges]="true"
+      [locale]="local"
+      [timePicker]="true"
+      [timePickerSeconds]="true"
+      [timePickerIncrement]="15"
+      [timePicker24Hour]="true"
+      opens="right"
+    />
+  </mat-form-field>
+</div>
+
+<div>
+  <h4>Open date picker from out of input</h4>
+
+  <button mat-raised-button color="primary" class="x-mat-date-picker-action" (click)="open($event)">
+    open from a button
+  </button>
+  <button
+    mat-raised-button
+    color="warn"
+    *ngIf="selected && selected.startDate"
+    class="x-mat-date-picker-action"
+    (click)="clear($event)"
+  >
+    Clear
+  </button>
 </div>
 
 <div>
@@ -67,61 +68,34 @@
       (ngModelChange)="ngModelChange($event)"
       (change)="change($event)"
       showCancel="true"
-      [locale]="{
-        applyLabel: '确定',
-        cancelLabel: '取消',
-        daysOfWeek: ['一', '二', '三', '四', '五', '六', '日'],
-        monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-        firstDay: 7
-      }"
+      [locale]="local"
     />
   </mat-form-field>
 </div>
 
-<!-- 
-<div class="row">
-  <div class="col s12">
-    <b>Using the change event :</b>
-    <pre class="prettyprint"><code class="html">&lt;input type="text" x-matdate-range-pickerMd
-[(ngModel)]="selected" placeholder="Choose date" (change)="change($event)"/&gt;</code>
-    </pre>
-
-    <b>Or with ngModel :</b>
-
-    <pre class="prettyprint"><code class="html">&lt;input type="text" x-matdate-range-pickerMd
-        [lockStartDate]="false"
-[(ngModel)]="selected" placeholder="Choose date"
-(ngModelChange)="ngModelChange($event)"/&gt;</code>
-    </pre>
-  </div>
-</div>
-<hr />
-<div class="row">
-  <div class="col s12">
-    <h3>Inline date-picker</h3>
-    <x-mat-date-picker
-      (selectedDate)="selectedDate($event)"
-      [locale]="{ applyLabel: 'Done', firstDay: 1 }"
-    ></x-mat-date-picker>
-    <br />
-    Selected date: {{ inlineDate | json }}
-  </div>
+<div>
+  <h3>Inline date-picker</h3>
+  <x-mat-date-picker
+    (selectedDate)="selectedDate($event)"
+    [isRangePicker]="true"
+    [locale]="{ applyLabel: 'Done', firstDay: 1 }"
+  ></x-mat-date-picker>
+  <br />
+  Selected date: {{ inlineDate | json }}
 </div>
 
-<div class="row">
-  <div class="col s12">
-    <h3>Inline date-picker with time and auto-apply</h3>
-    <x-mat-date-picker
-      (selectedDate)="selectedDateTime($event)"
-      [autoApply]="true"
-      [timePicker24Hour]="true"
-      [linkedCalendars]="true"
-      [startDate]="selected.startDate"
-      [endDate]="selected.endDate"
-      [timePicker]="true"
-      [locale]="{ applyLabel: 'Done', firstDay: 1 }"
-    ></x-mat-date-picker>
-    <br />
-    <p>Selected date (after changes): {{ inlineDateTime | json }}</p>
-  </div>
-</div> -->
+<div>
+  <h3>Inline date-picker with time and auto-apply</h3>
+  <x-mat-date-picker
+    (selectedDate)="selectedDateTime($event)"
+    [autoApply]="true"
+    [timePicker24Hour]="true"
+    [linkedCalendars]="true"
+    [startDate]="selected.startDate"
+    [endDate]="selected.endDate"
+    [timePicker]="true"
+    [locale]="{ applyLabel: 'Done', firstDay: 1 }"
+  ></x-mat-date-picker>
+  <br />
+  <p>Selected date (after changes): {{ inlineDateTime | json }}</p>
+</div>

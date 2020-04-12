@@ -18,6 +18,24 @@ import { BreadComponent } from './bread/bread.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, OnDestroy {
+  /**
+   * Sets the icon url shown between breadcrumbs. Defaults to 'chevron_right'.
+   */
+  @Input() set separatorIcon(separatorIcon: string) {
+    this._separatorIcon = separatorIcon;
+    this.setCrumbIcons();
+  }
+
+  // all the sub components, which are the individual breadcrumbs
+  @ContentChildren(BreadComponent, { descendants: true }) _breadcrumbs: QueryList<BreadComponent>;
+
+  // the list of hidden breadcrumbs not shown right now (responsive)
+  hiddenBreadcrumbs: BreadComponent[] = [];
+
+  get separatorIcon(): string {
+    return this._separatorIcon;
+  }
+
   private _resizeSubscription: Subscription = Subscription.EMPTY;
 
   private _widthSubject: Subject<number> = new Subject<number>();
@@ -27,24 +45,6 @@ export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, O
   private _resizing: boolean = false;
 
   private _separatorIcon: string = 'chevron_right';
-
-  // all the sub components, which are the individual breadcrumbs
-  @ContentChildren(BreadComponent, { descendants: true }) _breadcrumbs: QueryList<BreadComponent>;
-
-  // the list of hidden breadcrumbs not shown right now (responsive)
-  hiddenBreadcrumbs: BreadComponent[] = [];
-
-  /**
-   * Sets the icon url shown between breadcrumbs. Defaults to 'chevron_right'.
-   */
-  @Input() set separatorIcon(separatorIcon: string) {
-    this._separatorIcon = separatorIcon;
-    this.setCrumbIcons();
-  }
-
-  get separatorIcon(): string {
-    return this._separatorIcon;
-  }
 
   constructor(private _elementRef: ElementRef, private _changeDetectorRef: ChangeDetectorRef) {}
 

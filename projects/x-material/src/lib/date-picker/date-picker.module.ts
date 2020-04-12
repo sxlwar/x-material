@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule, MatIconModule } from '@angular/material';
 
 import { XMatDatePickerComponent } from './date-picker.component';
 import { LOCALE_CONFIG, LocaleConfig } from './date-picker.config';
@@ -10,7 +10,7 @@ import { LocaleService } from './locale.service';
 
 @NgModule({
   declarations: [XMatDatePickerComponent, XMatDatePickerDirective],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatButtonModule, MatIconModule],
   providers: [],
   exports: [XMatDatePickerComponent, XMatDatePickerDirective],
   entryComponents: [XMatDatePickerComponent],

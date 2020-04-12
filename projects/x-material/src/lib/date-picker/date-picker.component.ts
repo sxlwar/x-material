@@ -6,16 +6,12 @@ import {
 } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { LocaleConfig } from './date-picker.config';
+import { defaultRangesConfig, LocaleConfig, Ranges } from './date-picker.config';
 import { LocaleService } from './locale.service';
 
 export enum SideEnum {
   left = 'left',
   right = 'right',
-}
-
-export interface Ranges {
-  [key: string]: [Moment, Moment];
 }
 
 export interface XMatSelectedDate {
@@ -41,8 +37,14 @@ export interface XMatSelectedDate {
   ],
 })
 export class XMatDatePickerComponent implements OnInit {
+  /**
+   * @description range start date
+   */
   @Input() startDate = moment().startOf('day');
 
+  /**
+   * @description range end date
+   */
   @Input() endDate = moment().endOf('day');
 
   /**
@@ -60,6 +62,9 @@ export class XMatDatePickerComponent implements OnInit {
    */
   @Input() maxDate: Moment = null;
 
+  /**
+   * @description auto select date without apply button
+   */
   @Input() autoApply: boolean = false;
 
   /**
@@ -68,22 +73,43 @@ export class XMatDatePickerComponent implements OnInit {
   @Input() isRangePicker: boolean = false;
 
   /**
-   * @description enable to use clear button
+   * @description display clear button or not
    */
   @Input() showClearButton: boolean = false;
 
+  /**
+   * @ignore
+   */
   @Input() showDropdown: boolean = false;
 
+  /**
+   * @description week number of the year
+   */
   @Input() showWeekNumbers: boolean = false;
 
+  /**
+   * @description iso week number of the year
+   */
   @Input() showISOWeekNumbers: boolean = false;
 
+  /**
+   * @description display cancel button or not
+   */
   @Input() showCancel = false;
 
+  /**
+   * @description link the control buttons of the calendars
+   */
   @Input() linkedCalendars: boolean = false;
 
+  /**
+   * @ignore
+   */
   @Input() autoUpdateInput: boolean = true;
 
+  /**
+   * @ignore
+   */
   @Input() maxSpan: DurationInputArg1 = null;
 
   /**
@@ -194,12 +220,20 @@ export class XMatDatePickerComponent implements OnInit {
    * }
    * ```
    */
-  @Input() set ranges(value) {
-    this._ranges = value;
+  @Input() set ranges(value: Ranges | true) {
+    if (value === true) {
+      this._ranges = defaultRangesConfig;
+      this.showCustomRangeLabel = true;
+    }
+
+    if (typeof value === 'object') {
+      this._ranges = value;
+    }
+
     this.renderRanges();
   }
 
-  get ranges(): any {
+  get ranges(): Ranges | true {
     return this._ranges;
   }
 
@@ -233,6 +267,9 @@ export class XMatDatePickerComponent implements OnInit {
    */
   @Input() lockStartDate = false;
 
+  /**
+   * @description display custom range label
+   */
   @Input() showCustomRangeLabel: boolean;
 
   /**
@@ -245,6 +282,9 @@ export class XMatDatePickerComponent implements OnInit {
    */
   @Input() opens: 'left' | 'center' | 'right' | 'auto' = 'auto';
 
+  /**
+   * @description close the calendar immediately as soon as date selected
+   */
   @Input() closeOnAutoApply = true;
 
   @Output() selectedDate: EventEmitter<XMatSelectedDate> = new EventEmitter();
@@ -290,7 +330,7 @@ export class XMatDatePickerComponent implements OnInit {
 
   chosenRange: string;
 
-  rangesArray: Array<any> = [];
+  rangesArray: string[] = [];
 
   // some state information
   isShown: boolean = false;
@@ -373,17 +413,21 @@ export class XMatDatePickerComponent implements OnInit {
           } else {
             start = moment(this.ranges[range][0]);
           }
+
           if (typeof this.ranges[range][1] === 'string') {
             end = moment(this.ranges[range][1], this.locale.format);
           } else {
             end = moment(this.ranges[range][1]);
           }
+
           // If the start or end date exceed those allowed by the minDate or maxSpan
           // options, shorten the range to the allowable period.
           if (this.minDate && start.isBefore(this.minDate)) {
             start = this.minDate.clone();
           }
+
           let maxDate = this.maxDate;
+
           if (
             this.maxSpan &&
             maxDate &&
@@ -394,9 +438,11 @@ export class XMatDatePickerComponent implements OnInit {
           ) {
             maxDate = start.clone().add(this.maxSpan);
           }
+
           if (maxDate && end.isAfter(maxDate)) {
             end = maxDate.clone();
           }
+
           // If the end of the range is before the minimum or the start of the range is
           // after the maximum, don't display this range option at all.
           if (
@@ -405,31 +451,42 @@ export class XMatDatePickerComponent implements OnInit {
           ) {
             continue;
           }
+
           // Support unicode chars in the range names.
           const elem = document.createElement('textarea');
+
           elem.innerHTML = range;
+
           const rangeHtml = elem.value;
+
           this.ranges[rangeHtml] = [start, end];
         }
       }
+
       for (const range in this.ranges) {
         if (this.ranges[range]) {
           this.rangesArray.push(range);
         }
       }
+
       if (this.showCustomRangeLabel) {
         this.rangesArray.push(this.locale.customRangeLabel);
       }
+
       this.showCalInRanges = !this.rangesArray.length || this.alwaysShowCalendars;
+
       if (!this.timePicker) {
         this.startDate = this.startDate.startOf('day');
         this.endDate = this.endDate.endOf('day');
       }
     }
   }
-  renderTimePicker(side: SideEnum) {
-    let selected, minDate;
+
+  renderTimePicker(side: SideEnum): void {
+    let selected: Moment;
+    let minDate: Moment;
     const maxDate = this.maxDate;
+
     if (side === SideEnum.left) {
       (selected = this.startDate.clone()), (minDate = this.minDate);
     } else if (side === SideEnum.right && this.endDate) {
@@ -442,8 +499,10 @@ export class XMatDatePickerComponent implements OnInit {
       }
       minDate = this.startDate;
     }
+
     const start = this.timePicker24Hour ? 0 : 1;
     const end = this.timePicker24Hour ? 23 : 12;
+
     this.timePickerVariables[side] = {
       hours: [],
       minutes: [],
@@ -457,6 +516,7 @@ export class XMatDatePickerComponent implements OnInit {
       selectedMinute: 0,
       selectedSecond: 0,
     };
+
     // generate hours
     for (let i = start; i <= end; i++) {
       let i_in_24 = i;
@@ -524,11 +584,9 @@ export class XMatDatePickerComponent implements OnInit {
         }
       }
     }
+
     // generate AM/PM
     if (!this.timePicker24Hour) {
-      const am_html = '';
-      const pm_html = '';
-
       if (
         minDate &&
         selected
@@ -560,6 +618,7 @@ export class XMatDatePickerComponent implements OnInit {
     }
     this.timePickerVariables[side].selected = selected;
   }
+
   renderCalendar(side: SideEnum) {
     // side enum
     const mainCalendar: any = side === SideEnum.left ? this.leftCalendar : this.rightCalendar;
@@ -579,8 +638,8 @@ export class XMatDatePickerComponent implements OnInit {
       .year();
     const daysInLastMonth = moment([lastYear, lastMonth]).daysInMonth();
     const dayOfWeek = firstDay.day();
-    // initialize a 6 rows x 7 columns array for the calendar
-    const calendar: any = [];
+    const calendar: any = []; // initialize a 6 rows x 7 columns array for the calendar
+
     calendar.firstDay = firstDay;
     calendar.lastDay = lastDay;
 
@@ -637,11 +696,11 @@ export class XMatDatePickerComponent implements OnInit {
     } else {
       this.rightCalendar.calendar = calendar;
     }
-    //
+
     // Display the calendar
-    //
     const minDate = side === 'left' ? this.minDate : this.startDate;
     let maxDate = this.maxDate;
+
     // adjust maxDate to reflect the dateLimit setting in order to
     // grey out end dates beyond the dateLimit
     if (this.endDate === null && this.dateLimit) {
@@ -653,6 +712,7 @@ export class XMatDatePickerComponent implements OnInit {
         maxDate = maxLimit;
       }
     }
+
     this.calendarVariables[side] = {
       month: month,
       year: year,
@@ -674,6 +734,7 @@ export class XMatDatePickerComponent implements OnInit {
       maxDate: maxDate,
       calendar: calendar,
     };
+
     if (this.showDropdown) {
       const currentMonth = calendar[1][1].month();
       const currentYear = calendar[1][1].year();
@@ -744,6 +805,7 @@ export class XMatDatePickerComponent implements OnInit {
     if (!this.isShown) {
       this.updateElement();
     }
+
     this.startDateChanged.emit({ startDate: this.startDate });
     this.updateMonthsInView();
   }
@@ -826,6 +888,7 @@ export class XMatDatePickerComponent implements OnInit {
       ) {
         return;
       }
+
       if (this.startDate) {
         this.leftCalendar.month = this.startDate.clone().date(2);
         if (
@@ -852,6 +915,7 @@ export class XMatDatePickerComponent implements OnInit {
           .add(1, 'month');
       }
     }
+
     if (this.maxDate && this.linkedCalendars && this.isRangePicker && this.rightCalendar.month > this.maxDate) {
       this.rightCalendar.month = this.maxDate.clone().date(2);
       this.leftCalendar.month = this.maxDate
@@ -860,6 +924,7 @@ export class XMatDatePickerComponent implements OnInit {
         .subtract(1, 'month');
     }
   }
+
   /**
    *  This is responsible for updating the calendars
    */
@@ -872,8 +937,10 @@ export class XMatDatePickerComponent implements OnInit {
     }
     this.calculateChosenLabel();
   }
+
   updateElement() {
     const format = this.locale.displayFormat ? this.locale.displayFormat : this.locale.format;
+
     if (this.isRangePicker && this.autoUpdateInput) {
       if (this.startDate && this.endDate) {
         // if we use ranges and should show range label on input
@@ -896,6 +963,7 @@ export class XMatDatePickerComponent implements OnInit {
   remove() {
     this.isShown = false;
   }
+
   /**
    * this should calculate the label
    */
@@ -903,17 +971,19 @@ export class XMatDatePickerComponent implements OnInit {
     if (!this.locale || !this.locale.separator) {
       this._buildLocale();
     }
+
     let customRange = true;
     let i = 0;
+
     if (this.rangesArray.length > 0) {
-      for (const range in this.ranges) {
+      for (const range in this.ranges as Ranges) {
         if (this.ranges[range]) {
           if (this.timePicker) {
             const format = this.timePickerSeconds ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm';
             // ignore times when comparing dates if time picker seconds is not enabled
             if (
-              this.startDate.format(format) === this.ranges[range][0].format(format) &&
-              this.endDate.format(format) === this.ranges[range][1].format(format)
+              this.startDate.format(format) === (<Moment>this.ranges[range][0]).format(format) &&
+              this.endDate.format(format) === (<Moment>this.ranges[range][1]).format(format)
             ) {
               customRange = false;
               this.chosenRange = this.rangesArray[i];
@@ -922,8 +992,8 @@ export class XMatDatePickerComponent implements OnInit {
           } else {
             // ignore times when comparing dates if time picker is not enabled
             if (
-              this.startDate.format('YYYY-MM-DD') === this.ranges[range][0].format('YYYY-MM-DD') &&
-              this.endDate.format('YYYY-MM-DD') === this.ranges[range][1].format('YYYY-MM-DD')
+              this.startDate.format('YYYY-MM-DD') === (<Moment>this.ranges[range][0]).format('YYYY-MM-DD') &&
+              this.endDate.format('YYYY-MM-DD') === (<Moment>this.ranges[range][1]).format('YYYY-MM-DD')
             ) {
               customRange = false;
               this.chosenRange = this.rangesArray[i];
@@ -933,6 +1003,7 @@ export class XMatDatePickerComponent implements OnInit {
           i++;
         }
       }
+
       if (customRange) {
         if (this.showCustomRangeLabel) {
           this.chosenRange = this.locale.customRangeLabel;
@@ -956,16 +1027,16 @@ export class XMatDatePickerComponent implements OnInit {
 
     if (this.isInvalidDate && this.startDate && this.endDate) {
       // get if there are invalid date between range
-      const d = this.startDate.clone();
+      const startDate = this.startDate.clone();
 
-      while (d.isBefore(this.endDate)) {
-        if (this.isInvalidDate(d)) {
-          this.endDate = d.subtract(1, 'days');
+      while (startDate.isBefore(this.endDate)) {
+        if (this.isInvalidDate(startDate)) {
+          this.endDate = startDate.subtract(1, 'days');
           this.calculateChosenLabel();
           break;
         }
 
-        d.add(1, 'days');
+        startDate.add(1, 'days');
       }
     }
 
@@ -996,9 +1067,10 @@ export class XMatDatePickerComponent implements OnInit {
    * @param monthEvent get value in event.target.value
    * @param side left or right
    */
-  monthChanged(monthEvent: any, side: SideEnum) {
+  monthChanged(monthEvent: Event, side: SideEnum) {
     const year = this.calendarVariables[side].dropdowns.currentYear;
-    const month = parseInt(monthEvent.target.value, 10);
+    const month = parseInt((<HTMLSelectElement>monthEvent.target).value, 10);
+
     this.monthOrYearChanged(month, year, side);
   }
 
@@ -1010,6 +1082,7 @@ export class XMatDatePickerComponent implements OnInit {
   yearChanged(yearEvent: any, side: SideEnum) {
     const month = this.calendarVariables[side].dropdowns.currentMonth;
     const year = parseInt(yearEvent.target.value, 10);
+
     this.monthOrYearChanged(month, year, side);
   }
 
@@ -1018,13 +1091,14 @@ export class XMatDatePickerComponent implements OnInit {
    * @param timeEvent  an event
    * @param side left or right
    */
-  timeChanged(timeEvent: any, side: SideEnum) {
+  timeChanged(timeEvent: Event, side: SideEnum) {
     let hour = parseInt(this.timePickerVariables[side].selectedHour, 10);
     const minute = parseInt(this.timePickerVariables[side].selectedMinute, 10);
     const second = this.timePickerSeconds ? parseInt(this.timePickerVariables[side].selectedSecond, 10) : 0;
 
     if (!this.timePicker24Hour) {
       const ampm = this.timePickerVariables[side].ampmModel;
+
       if (ampm === 'PM' && hour < 12) {
         hour += 12;
       }
@@ -1075,6 +1149,7 @@ export class XMatDatePickerComponent implements OnInit {
       this.clickApply();
     }
   }
+
   /**
    *  call when month or year changed
    * @param month month number 0 -11
@@ -1127,6 +1202,7 @@ export class XMatDatePickerComponent implements OnInit {
   clickPrev(side: SideEnum) {
     if (side === SideEnum.left) {
       this.leftCalendar.month.subtract(1, 'month');
+
       if (this.linkedCalendars) {
         this.rightCalendar.month.subtract(1, 'month');
       }
@@ -1135,6 +1211,7 @@ export class XMatDatePickerComponent implements OnInit {
     }
     this.updateCalendars();
   }
+
   /**
    * Click on next month
    * @param side left or right calendar
@@ -1174,9 +1251,9 @@ export class XMatDatePickerComponent implements OnInit {
       (<HTMLTableDataCellElement>event.target).setAttribute('title', tooltip);
     }
   }
+
   /**
    * When selecting a date
-   * @param e event: get value by e.target.value
    * @param side left or right
    * @param row row position of the current date clicked
    * @param col col position of the current date clicked
@@ -1257,7 +1334,7 @@ export class XMatDatePickerComponent implements OnInit {
       this.isShown = true; // show calendars
       this.showCalInRanges = true;
     } else {
-      const dates: [Moment, Moment] = this.ranges[label];
+      const dates = this.ranges[label] as [Moment, Moment];
 
       this.startDate = dates[0].clone();
       this.endDate = dates[1].clone();
@@ -1362,10 +1439,11 @@ export class XMatDatePickerComponent implements OnInit {
    * update the locale options
    * @param locale
    */
-  updateLocale(locale) {
+  updateLocale(locale: LocaleConfig) {
     for (const key in locale) {
       if (locale.hasOwnProperty(key)) {
         this.locale[key] = locale[key];
+
         if (key === 'customRangeLabel') {
           this.renderRanges();
         }
@@ -1392,7 +1470,8 @@ export class XMatDatePickerComponent implements OnInit {
     if (range === this.locale.customRangeLabel) {
       return false;
     }
-    const rangeMarkers = this.ranges[range];
+
+    const rangeMarkers = this.ranges[range] as [Moment, Moment];
     const areBothBefore = rangeMarkers.every(date => {
       if (!this.minDate) {
         return false;
@@ -1406,8 +1485,10 @@ export class XMatDatePickerComponent implements OnInit {
       }
       return date.isAfter(this.maxDate);
     });
+
     return areBothBefore || areBothAfter;
   }
+
   /**
    *
    * @param date the date to add time
@@ -1445,6 +1526,7 @@ export class XMatDatePickerComponent implements OnInit {
       }
     }
   }
+
   private _buildCells(calendar, side: SideEnum) {
     for (let row = 0; row < 6; row++) {
       this.calendarVariables[side].classes[row] = {};

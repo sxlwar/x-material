@@ -15,5 +15,10 @@
         background-color: mat-color($primary);
       }
     }
+
+    // ranges
+    .ranges ul li button.active {
+      background-color: mat-color($primary);
+    }
   }
 }
