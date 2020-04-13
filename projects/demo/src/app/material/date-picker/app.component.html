@@ -26,7 +26,7 @@
       [timePickerSeconds]="true"
       [timePickerIncrement]="15"
       [timePicker24Hour]="true"
-      opens="right"
+      positionX="right"
     />
   </mat-form-field>
 </div>
@@ -78,6 +78,8 @@
   <x-mat-date-picker
     (selectedDate)="selectedDate($event)"
     [isRangePicker]="true"
+    [startDate]="selected.startDate"
+    [endDate]="selected.endDate"
     [locale]="{ applyLabel: 'Done', firstDay: 1 }"
   ></x-mat-date-picker>
   <br />
@@ -91,8 +93,6 @@
     [autoApply]="true"
     [timePicker24Hour]="true"
     [linkedCalendars]="true"
-    [startDate]="selected.startDate"
-    [endDate]="selected.endDate"
     [timePicker]="true"
     [locale]="{ applyLabel: 'Done', firstDay: 1 }"
   ></x-mat-date-picker>

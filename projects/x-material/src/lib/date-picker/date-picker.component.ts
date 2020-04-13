@@ -78,7 +78,7 @@ export class XMatDatePickerComponent implements OnInit {
   @Input() showClearButton: boolean = false;
 
   /**
-   * @ignore
+   * @description month year dropdown available
    */
   @Input() showDropdown: boolean = false;
 
@@ -275,12 +275,12 @@ export class XMatDatePickerComponent implements OnInit {
   /**
    * @description position the calendar to the up or down form the input element;
    */
-  @Input() drops: 'up' | 'down' = 'down';
+  @Input() positionY: 'up' | 'down' = 'down';
 
   /**
    * @description position the calendar form the input element;
    */
-  @Input() opens: 'left' | 'center' | 'right' | 'auto' = 'auto';
+  @Input() positionX: 'left' | 'center' | 'right' | 'auto' = 'auto';
 
   /**
    * @description close the calendar immediately as soon as date selected
@@ -299,11 +299,11 @@ export class XMatDatePickerComponent implements OnInit {
    * or when selecting a range or date without the apply button, and sends an object containing start and end date,
    * eg: { startDate: Moment, endDate: Moment }
    */
-  @Output() datesUpdated: EventEmitter<Object> = new EventEmitter();
+  @Output() datesUpdated: EventEmitter<Omit<XMatSelectedDate, 'chosenLabel'>> = new EventEmitter();
 
-  @Output() startDateChanged: EventEmitter<Object> = new EventEmitter();
+  @Output() startDateChanged: EventEmitter<Pick<XMatSelectedDate, 'startDate'>> = new EventEmitter();
 
-  @Output() endDateChanged: EventEmitter<Object> = new EventEmitter();
+  @Output() endDateChanged: EventEmitter<Pick<XMatSelectedDate, 'endDate'>> = new EventEmitter();
 
   /**
    * @ignore

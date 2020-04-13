@@ -11,11 +11,7 @@ import { XMatDatePickerComponent } from './date-picker.component';
 import { LocaleConfig, Ranges } from './date-picker.config';
 import { LocaleService } from './locale.service';
 
-type ModelValue =
-  | string
-  | {
-      [key: string]: Moment;
-    };
+type ModelValue = string | { [key: string]: Moment };
 
 @Directive({
   selector: 'input[xMatDatePicker]',
@@ -113,14 +109,16 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   /**
    * @description position the calendar to the up or down form the input element;
    */
-  @Input() drops: 'up' | 'down' = 'down';
+  @Input() positionY: 'up' | 'down' = 'down';
 
   /**
    * @description position the calendar form the input element;
    */
-  @Input() opens: 'left' | 'center' | 'right' | 'auto' = 'auto';
+  @Input() positionX: 'left' | 'center' | 'right' | 'auto' = 'auto';
 
   @Input() lastMonthDayClass: string;
+
+  @Input() firstMonthDayClass: string;
 
   @Input() emptyWeekRowClass: string;
 
@@ -175,27 +173,25 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
     }
   }
 
-  @Output('change') onChange: EventEmitter<Object> = new EventEmitter();
+  @Output('change') onChange: EventEmitter<ModelValue> = new EventEmitter();
 
   /**
    * @description Fired when clicked on range, and send an object with range label and dates value
    */
-  @Output('rangeClicked') rangeClicked: EventEmitter<Object> = new EventEmitter();
+  @Output('rangeClicked') rangeClicked: EventEmitter<ModelValue> = new EventEmitter();
 
   /**
    * @description Fires when the date model is updated, like applying (if you have activated the apply button),
    * or when selecting a range or date without the apply button, and sends an object containing start and end date,
    * eg: { startDate: Moment, endDate: Moment }
    */
-  @Output('datesUpdated') datesUpdated: EventEmitter<Object> = new EventEmitter();
+  @Output('datesUpdated') datesUpdated: EventEmitter<ModelValue> = new EventEmitter();
 
-  @Output() startDateChanged: EventEmitter<Object> = new EventEmitter();
+  @Output() startDateChanged: EventEmitter<Partial<ModelValue>> = new EventEmitter();
 
-  @Output() endDateChanged: EventEmitter<Object> = new EventEmitter();
+  @Output() endDateChanged: EventEmitter<Partial<ModelValue>> = new EventEmitter();
 
   picker: XMatDatePickerComponent;
-
-  firstMonthDayClass: string;
 
   _locale: LocaleConfig = {};
 
@@ -279,8 +275,8 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
     this.picker.emptyWeekRowClass = this.emptyWeekRowClass;
     this.picker.firstDayOfNextMonthClass = this.firstDayOfNextMonthClass;
     this.picker.lastDayOfPreviousMonthClass = this.lastDayOfPreviousMonthClass;
-    this.picker.drops = this.drops;
-    this.picker.opens = this.opens;
+    this.picker.positionY = this.positionY;
+    this.picker.positionX = this.positionX;
     this.localeDiffer = this.differs.find(this.locale).create();
     this.picker.closeOnAutoApply = this.closeOnAutoApply;
   }
@@ -405,25 +401,25 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
     const container = this.picker.pickerContainer.nativeElement;
     const element = this._el.nativeElement;
 
-    if (this.drops && this.drops === 'up') {
+    if (this.positionY && this.positionY === 'up') {
       containerTop = element.offsetTop - container.clientHeight + 'px';
     } else {
       containerTop = 'auto';
     }
 
-    if (this.opens === 'right') {
+    if (this.positionX === 'right') {
       style = {
         top: containerTop,
         left: element.offsetLeft - container.clientWidth + element.clientWidth + 'px',
         right: 'auto',
       };
-    } else if (this.opens === 'center') {
+    } else if (this.positionX === 'center') {
       style = {
         top: containerTop,
         left: element.offsetLeft + element.clientWidth / 2 - container.clientWidth / 2 + 'px',
         right: 'auto',
       };
-    } else if (this.opens === 'left') {
+    } else if (this.positionX === 'left') {
       style = {
         top: containerTop,
         left: element.offsetLeft + 'px',
