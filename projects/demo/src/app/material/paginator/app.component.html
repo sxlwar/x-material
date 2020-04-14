@@ -1,0 +1,74 @@
+<section>
+  <h4>Basic</h4>
+  <x-mat-paginator [firstLast]="true" [pageSize]="100" [total]="1234"></x-mat-paginator>
+</section>
+
+<section>
+  <h4>Page size</h4>
+  <x-mat-paginator
+    #pagingBarPageSize
+    [firstLast]="true"
+    [pageSize]="pageSize.value"
+    [total]="1345"
+    (change)="changePageSize($event)"
+  >
+    <span>Per page:</span>
+    <mat-select [style.width.px]="50" [formControl]="pageSize">
+      <mat-option *ngFor="let size of [50, 100, 200, 500, 1000, 2000]" [value]="size">
+        {{ size }}
+      </mat-option>
+    </mat-select>
+    {{ pagingBarPageSize.range }} of {{ pagingBarPageSize.total }}
+  </x-mat-paginator>
+</section>
+
+<section>
+  <h4>Page number links</h4>
+  <x-mat-paginator
+    #pagingBarLinks
+    pageLinkCount="5"
+    [firstLast]="true"
+    [pageSize]="100"
+    [total]="1345"
+    (change)="changeLinks($event)"
+  >
+    {{ pagingBarLinks.range }} of {{ pagingBarLinks.total }}
+  </x-mat-paginator>
+</section>
+
+<section>
+  <h4>Full usage</h4>
+  <x-mat-paginator
+    #pagingBarInput
+    pageLinkCount="5"
+    [pageSize]="100"
+    [total]="1345"
+    [firstLast]="true"
+    (change)="changeInput($event)"
+  >
+    <span>第: {{ pagingBarInput.range }}</span>
+    <span>共: {{ pagingBarInput.total }}</span>
+    <p>
+      <mat-select [style.width.px]="50" [formControl]="pageSize">
+        <mat-option *ngFor="let size of [50, 100, 200, 500, 1000, 2000]" [value]="size">
+          {{ size }}
+        </mat-option>
+      </mat-select>
+      <span>条/页</span>
+    </p>
+    <p>
+      跳转到:
+      <mat-form-field [style.width.px]="30">
+        <input
+          #goToInput
+          matInput
+          type="number"
+          [min]="1"
+          [max]="pagingBarInput.maxPage"
+          [value]="pagingBarInput.page"
+          (change)="pagingBarInput.navigateToPage(goToInput.value); goToInput.value = pagingBarInput.page"
+        />
+      </mat-form-field>
+    </p>
+  </x-mat-paginator>
+</section>

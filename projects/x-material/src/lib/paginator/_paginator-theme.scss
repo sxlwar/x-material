@@ -1,0 +1,26 @@
+@import '../common/styles/theme-functions';
+@import '../common/styles/typography-functions';
+
+@mixin x-mat-paginator-typography($config) {
+  .x-mat-paginator {
+    font: {
+      family: x-mat-font-family($config);
+      size: x-mat-font-size($config, caption);
+    }
+  }
+}
+
+@mixin x-mat-paginator-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  x-mat-paginator {
+    &,
+    & mat-select .mat-select-value {
+      color: mat-color($foreground, secondary-text);
+    }
+  }
+}

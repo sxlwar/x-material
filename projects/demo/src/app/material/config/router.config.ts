@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { BreadcrumbComponent } from '../breadcrumb';
 import { DatePickerComponent } from '../date-picker';
 import { MessageComponent } from '../message';
+import { PaginatorComponent } from '../paginator';
 import { PasswordComponent } from '../password';
 
 export const routes: Routes = [
@@ -21,5 +22,9 @@ export const routes: Routes = [
   {
     path: 'date-picker',
     component: DatePickerComponent,
+  },
+  {
+    path: 'paginator',
+    component: PaginatorComponent,
   },
 ];

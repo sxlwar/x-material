@@ -1,0 +1,59 @@
+<div class="x-mat-paginator" (change)="$event.stopPropagation()">
+  <ng-content></ng-content>
+
+  <div class="x-mat-paginator-navigation">
+    <button
+      mat-icon-button
+      class="x-mat-paginator-first-page"
+      type="button"
+      *ngIf="firstLast"
+      [disabled]="isMinPage()"
+      (click)="firstPage()"
+    >
+      <mat-icon>{{ isRTL ? 'skip_next' : 'skip_previous' }}</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      class="x-mat-paginator-prev-page"
+      type="button"
+      [disabled]="isMinPage()"
+      (click)="prevPage()"
+    >
+      <mat-icon>{{ isRTL ? 'navigate_next' : 'navigate_before' }}</mat-icon>
+    </button>
+
+    <ng-template *ngIf="pageLinkCount > 0" let-link let-index="index" ngFor [ngForOf]="pageLinks">
+      <button
+        class="x-mat-paginator-link-page"
+        mat-icon-button
+        type="button"
+        [color]="page === link ? 'accent' : undefined"
+        (click)="navigateToPage(link)"
+      >
+        {{ link }}
+      </button>
+    </ng-template>
+
+    <button
+      mat-icon-button
+      class="x-mat-paginator-next-page"
+      type="button"
+      [disabled]="isMaxPage()"
+      (click)="nextPage()"
+    >
+      <mat-icon>{{ isRTL ? 'navigate_before' : 'navigate_next' }}</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      class="x-mat-paginator-last-page"
+      type="button"
+      *ngIf="firstLast"
+      [disabled]="isMaxPage()"
+      (click)="lastPage()"
+    >
+      <mat-icon>{{ isRTL ? 'skip_previous' : 'skip_next' }}</mat-icon>
+    </button>
+  </div>
+</div>
