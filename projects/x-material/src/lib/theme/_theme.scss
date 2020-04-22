@@ -2,6 +2,7 @@
 @import '../message/message.theme';
 @import '../date-picker/date-picker.theme';
 @import '../paginator/paginator-theme';
+@import '../loading//loading.theme';
 @import './typography';
 
 // Create a theme.
@@ -11,4 +12,5 @@
   @include x-mat-breadcrumb-theme($theme);
   @include x-mat-date-picker-theme($theme);
   @include x-mat-paginator-theme($theme);
+  @include x-mat-loading-theme($theme);
 }

@@ -1,0 +1,42 @@
+.x-mat-loading-wrapper {
+  position: relative;
+  display: block;
+  &.td-fullscreen {
+    position: inherit;
+  }
+  .x-mat-loading {
+    // layout
+    box-sizing: border-box;
+    display: flex;
+    // [layout="row"]
+    flex-direction: row;
+    // [layout-align="center center"]
+    align-items: center;
+    align-content: center;
+    max-width: 100%;
+    justify-content: center;
+    // flex
+    flex: 1;
+  }
+  &.x-mat-overlay {
+    .x-mat-loading {
+      position: absolute;
+      margin: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      mat-progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+  &.x-mat-overlay-circular {
+    .x-mat-loading {
+      bottom: 0;
+    }
+  }
+}

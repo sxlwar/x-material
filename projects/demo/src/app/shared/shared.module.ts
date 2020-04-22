@@ -1,4 +1,5 @@
 import { XMatBreadcrumbModule } from 'x-material/breadcrumb';
+import { XMatLoadingModule } from 'x-material/loading';
 import { XMatMessageModule } from 'x-material/message';
 import { XMatPaginatorModule } from 'x-material/paginator';
 import { XMatPasswordModule } from 'x-material/password';
@@ -17,6 +18,7 @@ const config: Type<any>[] = [
   MatSelectModule,
   ReactiveFormsModule,
   XMatBreadcrumbModule,
+  XMatLoadingModule,
   XMatMessageModule,
   XMatPaginatorModule,
   XMatPasswordModule,

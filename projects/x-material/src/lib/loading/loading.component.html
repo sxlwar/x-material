@@ -1,0 +1,20 @@
+<div
+  class="x-mat-loading-wrapper"
+  [style.min-height]="getHeight()"
+  [class.x-mat-overlay-circular]="(isOverlay() || isFullScreen()) && !isLinear()"
+  [class.x-mat-overlay]="isOverlay() || isFullScreen()"
+  [class.td-fullscreen]="isFullScreen()"
+>
+  <div [@xMatFadeInOut]="animation" [style.min-height]="getHeight()" class="x-mat-loading">
+    <mat-progress-spinner
+      *ngIf="isCircular()"
+      [mode]="mode"
+      [value]="value"
+      [color]="color"
+      [diameter]="getCircleDiameter()"
+      [strokeWidth]="getCircleStrokeWidth()"
+    ></mat-progress-spinner>
+    <mat-progress-bar *ngIf="isLinear()" [mode]="mode" [value]="value" [color]="color"></mat-progress-bar>
+  </div>
+  <ng-template [cdkPortalOutlet]="content"></ng-template>
+</div>

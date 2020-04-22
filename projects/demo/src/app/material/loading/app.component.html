@@ -1,0 +1,68 @@
+<div>
+  <h4>Basic usage</h4>
+
+  <div *xMatLoading="'overlayStarSyntax'; mode: 'indeterminate'; type: 'circle'; strategy: 'overlay'; color: 'accent'">
+    <div style="padding: 16px; text-align: center;">
+      loading content...
+    </div>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="toggleOverlayStarSyntax()">
+    Toggle Loader
+  </button>
+</div>
+
+<div>
+  <h4>Template usage</h4>
+
+  <ng-template xMatLoading [xMatLoadingUntil]="!loading">
+    <div style="padding: 16px; text-align: center;">
+      loading content...
+    </div>
+  </ng-template>
+
+  <button mat-raised-button color="primary" (click)="toggle()">Toggle Loader</button>
+</div>
+
+<div>
+  <h4>Until Syntax Using Observables</h4>
+
+  <div *xMatLoading="let item; until: observable$ | async">
+    <div style="padding: 16px; text-align: center;">
+      {{ item.name }}
+    </div>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="toggleUntil()">Toggle Loader</button>
+</div>
+
+<div>
+  <h4>Full Screen</h4>
+
+  <button mat-raised-button color="primary" (click)="toggleDefaultFullscreenDemo()" style="margin-right: 2em;">
+    Toggle default fullscreen Loader
+  </button>
+
+  <button mat-raised-button color="primary" (click)="toggleCustomFullscreenDemo()">
+    Toggle custom Fullscreen Loader
+  </button>
+</div>
+
+<div>
+  <h4>Icon</h4>
+  <mat-list>
+    <ng-template let-item let-last="last" ngFor [ngForOf]="itemList">
+      <mat-list-item>
+        <div matListAvatar>
+          <ng-template xMatLoading [xMatLoadingUntil]="!item.value" xMatLoadingStrategy="overlay">
+            <mat-icon matListAvatar>
+              settings_backup_restore
+            </mat-icon>
+          </ng-template>
+        </div>
+        <h3 matLine>{{ item.label }}</h3>
+      </mat-list-item>
+      <mat-divider *ngIf="!last"></mat-divider>
+    </ng-template>
+  </mat-list>
+</div>
