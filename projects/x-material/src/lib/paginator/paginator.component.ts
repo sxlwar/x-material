@@ -4,7 +4,7 @@ import {
     ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Optional, Output
 } from '@angular/core';
 
-export interface IPageChangeEvent {
+export interface XMatPageChangeEvent {
   page: number;
   maxPage: number;
   pageSize: number;
@@ -18,7 +18,7 @@ export interface IPageChangeEvent {
   templateUrl: './paginator.component.html',
   styleUrls: ['./paginator.component.scss'],
 })
-export class PaginatorComponent implements OnInit {
+export class XMatPaginatorComponent implements OnInit {
   /**
    * firstLast?: boolean
    * Shows or hides the first and last page buttons of the paging bar. Defaults to 'false'
@@ -90,7 +90,7 @@ export class PaginatorComponent implements OnInit {
    * Returns the range of the rows.
    */
   get range(): string {
-    return `${!this._toRow ? 0 : this._fromRow}-${this._toRow}`;
+    return `${!this.toRow ? 0 : this.fromRow}-${this.toRow}`;
   }
 
   /**
@@ -112,9 +112,9 @@ export class PaginatorComponent implements OnInit {
   /**
    * change?: function
    * Method to be executed when page size changes or any button is clicked in the paging bar.
-   * Emits an [IPageChangeEvent] implemented object.
+   * Emits an [XMatPageChangeEvent] implemented object.
    */
-  @Output() change: EventEmitter<IPageChangeEvent> = new EventEmitter<IPageChangeEvent>();
+  @Output() change: EventEmitter<XMatPageChangeEvent> = new EventEmitter<XMatPageChangeEvent>();
 
   get isRTL(): boolean {
     if (this._dir) {
@@ -123,15 +123,15 @@ export class PaginatorComponent implements OnInit {
     return false;
   }
 
+  fromRow: number = 1;
+
+  toRow: number = 1;
+
   private _pageSize: number = 50;
 
   private _total: number = 0;
 
   private _page: number = 1;
-
-  private _fromRow: number = 1;
-
-  private _toRow: number = 1;
 
   private _initialized: boolean = false;
 
@@ -214,8 +214,8 @@ export class PaginatorComponent implements OnInit {
 
   private _calculateRows(): void {
     const top: number = this._pageSize * this._page;
-    this._fromRow = this._pageSize * (this._page - 1) + 1;
-    this._toRow = this._total > top ? top : this._total;
+    this.fromRow = this._pageSize * (this._page - 1) + 1;
+    this.toRow = this._total > top ? top : this._total;
   }
 
   /**
@@ -278,13 +278,13 @@ export class PaginatorComponent implements OnInit {
     this._calculateRows();
     this._calculatePageLinks();
 
-    const event: IPageChangeEvent = {
+    const event: XMatPageChangeEvent = {
       page: this._page,
       maxPage: this.maxPage,
       pageSize: this._pageSize,
       total: this._total,
-      fromRow: this._fromRow,
-      toRow: this._toRow,
+      fromRow: this.fromRow,
+      toRow: this.toRow,
     };
 
     this._changeDetectorRef.markForCheck();

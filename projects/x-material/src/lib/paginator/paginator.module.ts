@@ -4,11 +4,11 @@ import { MatButtonModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
-import { PaginatorComponent } from './paginator.component';
+import { XMatPaginatorComponent } from './paginator.component';
 
 @NgModule({
   imports: [MatInputModule, MatIconModule, CommonModule, MatButtonModule],
-  declarations: [PaginatorComponent],
-  exports: [PaginatorComponent],
+  declarations: [XMatPaginatorComponent],
+  exports: [XMatPaginatorComponent],
 })
 export class XMatPaginatorModule {}

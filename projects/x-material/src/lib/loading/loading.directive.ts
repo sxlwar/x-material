@@ -51,7 +51,7 @@ export class XMatLoadingDirective implements OnInit, OnDestroy {
   @Input('xMatLoadingUntil')
   set until(until: any) {
     if (!this._name) {
-      this._name = 'td-loading-until-' + X_MAT_LOADING_NEXT_ID++;
+      this._name = 'x-mat-loading-until-' + X_MAT_LOADING_NEXT_ID++;
     }
     this._context.$implicit = this._context.xMatLoading = until;
     if (!until) {

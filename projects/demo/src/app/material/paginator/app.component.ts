@@ -1,4 +1,4 @@
-import { IPageChangeEvent } from 'x-material/paginator';
+import { XMatPageChangeEvent } from 'x-material/paginator';
 
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -15,23 +15,23 @@ import { FormControl } from '@angular/forms';
   ],
 })
 export class AppComponent {
-  eventPageSize: IPageChangeEvent;
+  eventPageSize: XMatPageChangeEvent;
 
   pageSize: FormControl = new FormControl(50);
 
-  eventLinks: IPageChangeEvent;
+  eventLinks: XMatPageChangeEvent;
 
-  eventInput: IPageChangeEvent;
+  eventInput: XMatPageChangeEvent;
 
-  changeInput(event: IPageChangeEvent): void {
+  changeInput(event: XMatPageChangeEvent): void {
     this.eventInput = event;
   }
 
-  changePageSize(event: IPageChangeEvent): void {
+  changePageSize(event: XMatPageChangeEvent): void {
     this.eventPageSize = event;
   }
 
-  changeLinks(event: IPageChangeEvent): void {
+  changeLinks(event: XMatPageChangeEvent): void {
     this.eventLinks = event;
   }
 }

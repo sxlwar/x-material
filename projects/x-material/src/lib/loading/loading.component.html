@@ -3,7 +3,7 @@
   [style.min-height]="getHeight()"
   [class.x-mat-overlay-circular]="(isOverlay() || isFullScreen()) && !isLinear()"
   [class.x-mat-overlay]="isOverlay() || isFullScreen()"
-  [class.td-fullscreen]="isFullScreen()"
+  [class.x-mat-fullscreen]="isFullScreen()"
 >
   <div [@xMatFadeInOut]="animation" [style.min-height]="getHeight()" class="x-mat-loading">
     <mat-progress-spinner
