@@ -25,8 +25,10 @@ export class AppComponent implements OnInit {
 
   @ViewChild(XMatDatePickerDirective, { static: true }) pickerDirective: XMatDatePickerDirective;
 
+  // tslint:disable-next-line:no-any
   inlineDate: any;
 
+  // tslint:disable-next-line:no-any
   inlineDateTime: any;
 
   picker: XMatDatePickerComponent;

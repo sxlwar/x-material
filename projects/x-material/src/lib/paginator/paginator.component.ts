@@ -1,3 +1,4 @@
+/* tslint:disable:no-magic-numbers */
 import { Dir } from '@angular/cdk/bidi';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
 import {
@@ -23,13 +24,13 @@ export class XMatPaginatorComponent implements OnInit {
    * firstLast?: boolean
    * Shows or hides the first and last page buttons of the paging bar. Defaults to 'false'
    */
-  @Input() firstLast: boolean = true;
+  @Input() firstLast = true;
 
   /**
    * initialPage?: number
    * Sets starting page for the paging bar. Defaults to '1'
    */
-  @Input() initialPage: number = 1;
+  @Input() initialPage = 1;
 
   /**
    * pageLinkCount?: number
@@ -114,6 +115,7 @@ export class XMatPaginatorComponent implements OnInit {
    * Method to be executed when page size changes or any button is clicked in the paging bar.
    * Emits an [XMatPageChangeEvent] implemented object.
    */
+  // tslint:disable-next-line
   @Output() change: EventEmitter<XMatPageChangeEvent> = new EventEmitter<XMatPageChangeEvent>();
 
   get isRTL(): boolean {
@@ -123,31 +125,31 @@ export class XMatPaginatorComponent implements OnInit {
     return false;
   }
 
-  fromRow: number = 1;
+  fromRow = 1;
 
-  toRow: number = 1;
+  toRow = 1;
 
-  private _pageSize: number = 50;
+  private _pageSize = 50;
 
-  private _total: number = 0;
+  private _total = 0;
 
-  private _page: number = 1;
+  private _page = 1;
 
-  private _initialized: boolean = false;
+  private _initialized = false;
 
   private _pageLinks: number[] = [];
 
-  private _pageLinkCount: number = 0;
+  private _pageLinkCount = 0;
 
   /**
    * special case when 2 pageLinks, detect when hit end of pages so can lead in correct direction
    */
-  private _hitEnd: boolean = false;
+  private _hitEnd = false;
 
   /**
    * special case when 2 pageLinks, detect when hit start of pages so can lead in correct direction
    */
-  private _hitStart: boolean = false;
+  private _hitStart = false;
 
   constructor(@Optional() private _dir: Dir, private _changeDetectorRef: ChangeDetectorRef) {}
 
@@ -222,6 +224,7 @@ export class XMatPaginatorComponent implements OnInit {
    * _calculatePageLinks?: function
    * Calculates the page links that should be shown to the user based on the current state of the paginator
    */
+  // tslint:disable-next-line:cyclomatic-complexity
   private _calculatePageLinks(): void {
     // special case when 2 pageLinks, detect when hit end of pages so can lead in correct direction
     if (this.isMaxPage()) {
@@ -246,11 +249,12 @@ export class XMatPaginatorComponent implements OnInit {
     this._pageLinks = [];
 
     // fill in the array with the pageLinks based on the current selected page
-    const middlePageLinks: number = Math.floor(actualPageLinkCount / 2);
+    const middlePageLinks = Math.floor(actualPageLinkCount / 2);
 
-    for (let x: number = 0; x < actualPageLinkCount; x++) {
+    for (let x = 0; x < actualPageLinkCount; x++) {
       // don't go past the maxPage in the pageLinks
       // have to handle even and odd pageLinkCounts differently so can still lead to the next numbers
+      // tslint:disable-next-line:prefer-conditional-expression
       if (
         (actualPageLinkCount % 2 === 0 && this.page + middlePageLinks > this.maxPage) ||
         (actualPageLinkCount % 2 !== 0 && this.page + middlePageLinks >= this.maxPage)

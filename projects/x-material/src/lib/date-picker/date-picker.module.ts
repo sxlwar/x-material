@@ -16,7 +16,6 @@ import { LocaleService } from './locale.service';
   entryComponents: [XMatDatePickerComponent],
 })
 export class XMatDatePickerModule {
-  constructor() {}
   static forRoot(config: LocaleConfig = {}): ModuleWithProviders<XMatDatePickerModule> {
     return {
       ngModule: XMatDatePickerModule,

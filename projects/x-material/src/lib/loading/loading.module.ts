@@ -10,8 +10,10 @@ import { XMatLoadingDirective } from './loading.directive';
 import { LOADING_FACTORY_PROVIDER } from './loading.factory';
 import { LOADING_PROVIDER } from './loading.service';
 
+// tslint:disable-next-line:no-any
 const X_MAT_LOADING: Type<any>[] = [XMatLoadingComponent, XMatLoadingDirective];
 
+// tslint:disable-next-line:no-any
 const X_MAT_LOADING_ENTRY_COMPONENTS: Type<any>[] = [XMatLoadingComponent];
 
 @NgModule({

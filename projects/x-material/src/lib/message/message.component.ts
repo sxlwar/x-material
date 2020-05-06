@@ -6,6 +6,7 @@ import {
 import { xMatCollapseAnimation } from '../common/animations/collapse';
 
 @Directive({
+  // tslint:disable-next-line
   selector: '[XMatMessageContainer]',
 })
 export class XMatMessageContainerDirective {
@@ -19,35 +20,10 @@ export class XMatMessageContainerDirective {
   animations: [xMatCollapseAnimation],
 })
 export class XMatMessageComponent implements AfterViewInit {
-  private _color: string;
-
-  private _opened: boolean = true;
-
-  private _hidden: boolean = false;
-
-  private _animating: boolean = false;
-
-  private _initialized: boolean = false;
-
   @ViewChild(XMatMessageContainerDirective, { static: true }) _childElement: XMatMessageContainerDirective;
 
+  // tslint:disable-next-line:no-any
   @ViewChild('tpl', { static: false }) _template: TemplateRef<any>;
-
-  /**
-   * Binding host to xMatCollapse animation
-   */
-  @HostBinding('@xMatCollapse')
-  get collapsedAnimation(): any {
-    return { value: !this._opened, duration: 100 };
-  }
-
-  /**
-   * Binding host to display style when hidden
-   */
-  @HostBinding('style.display')
-  get hidden(): string {
-    return this._hidden ? 'none' : undefined;
-  }
 
   /**
    * label: string
@@ -69,7 +45,7 @@ export class XMatMessageComponent implements AfterViewInit {
    * The icon to be displayed before the title.
    * Defaults to `info_outline` icon
    */
-  @Input() icon: string = 'info_outline';
+  @Input() icon = 'info_outline';
 
   /**
    * color?: primary | accent | warn
@@ -99,13 +75,10 @@ export class XMatMessageComponent implements AfterViewInit {
   }
 
   /**
-   * opened?: boolean
-   *
-   * Shows or hiddes the message depending on its value.
+   * Shows or hides the message depending on its value.
    * Defaults to 'true'.
    */
-  @Input('opened')
-  set opened(opened: boolean) {
+  @Input('opened') set opened(opened: boolean) {
     if (this._initialized) {
       if (opened) {
         this.open();
@@ -116,9 +89,20 @@ export class XMatMessageComponent implements AfterViewInit {
       this._opened = opened;
     }
   }
+
   get opened(): boolean {
     return this._opened;
   }
+
+  private _color: string;
+
+  private _opened = true;
+
+  private _hidden = false;
+
+  private _animating = false;
+
+  private _initialized = false;
 
   constructor(
     private _renderer: Renderer2,
@@ -186,6 +170,22 @@ export class XMatMessageComponent implements AfterViewInit {
     } else {
       this.open();
     }
+  }
+
+  /**
+   * Binding host to xMatCollapse animation
+   */
+  // tslint:disable-next-line:no-any
+  @HostBinding('@xMatCollapse') get collapsedAnimation(): any {
+    return { value: !this._opened, duration: 100 };
+  }
+
+  /**
+   * Binding host to display style when hidden
+   */
+  @HostBinding('style.display')
+  get hidden(): string {
+    return this._hidden ? 'none' : undefined;
   }
 
   /**

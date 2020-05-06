@@ -29,9 +29,7 @@ export class BreadcrumbService {
 
   changeBreadcrumb(route: ActivatedRouteSnapshot, name: string) {
     const rootUrl = this.createRootUrl(route);
-    const breadcrumb = this.breadcrumbs.find(function(bc) {
-      return bc.url === rootUrl;
-    });
+    const breadcrumb = this.breadcrumbs.find(bc => bc.url === rootUrl);
 
     if (!breadcrumb) {
       return;
@@ -42,6 +40,7 @@ export class BreadcrumbService {
     this.breadcrumbChanged.next(this.breadcrumbs);
   }
 
+  // tslint:disable-next-line:cyclomatic-complexity
   private onRouteEvent(routeEvent: Event): void {
     if (!(routeEvent instanceof NavigationEnd)) {
       return;
@@ -50,7 +49,7 @@ export class BreadcrumbService {
     let route = this.router.routerState.root.snapshot;
     let url = '';
     let breadCrumbIndex = 0;
-    let newCrumbs = [];
+    const newCrumbs = [];
 
     while (route.firstChild != null) {
       // except null and undefined;
@@ -66,14 +65,15 @@ export class BreadcrumbService {
 
       url += `/${this.createUrl(route)}`;
 
+      // tslint:disable-next-line:no-string-literal
       if (!route.data['breadcrumb']) {
         continue;
       }
 
-      let newCrumb = this.createBreadcrumb(route, url);
+      const newCrumb = this.createBreadcrumb(route, url);
 
       if (breadCrumbIndex < this.breadcrumbs.length) {
-        let existing = this.breadcrumbs[breadCrumbIndex++];
+        const existing = this.breadcrumbs[breadCrumbIndex++];
 
         if (existing && existing.route === route.routeConfig) {
           newCrumb.displayName = existing.displayName;
@@ -89,9 +89,10 @@ export class BreadcrumbService {
 
   private createBreadcrumb(route: ActivatedRouteSnapshot, url: string): Breadcrumb {
     return {
+      // tslint:disable-next-line:no-string-literal
       displayName: route.data['breadcrumb'],
       terminal: this.isTerminal(route),
-      url: url,
+      url,
       route: route.routeConfig,
     };
   }

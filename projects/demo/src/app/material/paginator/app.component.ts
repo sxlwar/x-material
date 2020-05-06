@@ -17,6 +17,7 @@ import { FormControl } from '@angular/forms';
 export class AppComponent {
   eventPageSize: XMatPageChangeEvent;
 
+  // tslint:disable-next-line:no-magic-numbers
   pageSize: FormControl = new FormControl(50);
 
   eventLinks: XMatPageChangeEvent;

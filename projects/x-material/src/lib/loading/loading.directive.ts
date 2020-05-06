@@ -8,28 +8,25 @@ import { XMatLoadingService } from './loading.service';
  * Context class for variable reference
  */
 export class XMatLoadingContext {
-  public $implicit: any = undefined;
-  public xMatLoading: any = undefined;
+  // tslint:disable-next-line:no-any
+  $implicit: any = undefined;
+  // tslint:disable-next-line:no-any
+  xMatLoading: any = undefined;
 }
 
 // Constant for generation of the id for the next component
-let X_MAT_LOADING_NEXT_ID: number = 0;
+let X_MAT_LOADING_NEXT_ID = 0;
 
 @Directive({
+  // tslint:disable-next-line
   selector: '[xMatLoading]',
 })
 export class XMatLoadingDirective implements OnInit, OnDestroy {
-  private _context: XMatLoadingContext = new XMatLoadingContext();
-
-  private _type: LoadingType;
-
-  private _mode: LoadingMode;
-
-  private _strategy: LoadingStrategy;
-
-  private _name: string;
-
-  private _loadingRef: ILoadingRef;
+  /**
+   * xMatLoadingColor?: "primary" | "accent" | "warn"
+   * Sets the theme color of the loading component. Defaults to "primary"
+   */
+  @Input('xMatLoadingColor') color: 'primary' | 'accent' | 'warn' = 'primary';
 
   /**
    * xMatLoading: string
@@ -48,12 +45,14 @@ export class XMatLoadingDirective implements OnInit, OnDestroy {
    * Else if its any value that can be resolved as true, it will resolve the mask.
    * [name] is optional when using [until], but can still be used to register/resolve it manually.
    */
-  @Input('xMatLoadingUntil')
-  set until(until: any) {
+  // tslint:disable-next-line:no-any
+  @Input('xMatLoadingUntil') set until(until: any) {
     if (!this._name) {
       this._name = 'x-mat-loading-until-' + X_MAT_LOADING_NEXT_ID++;
     }
+
     this._context.$implicit = this._context.xMatLoading = until;
+
     if (!until) {
       this._loadingService.register(this._name);
     } else {
@@ -66,13 +65,8 @@ export class XMatLoadingDirective implements OnInit, OnDestroy {
    * Sets the type of loading mask depending on value.
    * Defaults to [LoadingType.Circular | 'circular'].
    */
-  @Input('xMatLoadingType')
-  set type(type: LoadingType) {
-    if (type === LoadingType.Linear) {
-      this._type = LoadingType.Linear;
-    } else {
-      this._type = LoadingType.Circular;
-    }
+  @Input('xMatLoadingType') set type(type: LoadingType) {
+    this._type = type === LoadingType.Linear ? LoadingType.Linear : LoadingType.Circular;
   }
 
   /**
@@ -82,11 +76,7 @@ export class XMatLoadingDirective implements OnInit, OnDestroy {
    */
   @Input('xMatLoadingMode')
   set mode(mode: LoadingMode) {
-    if (mode === LoadingMode.Determinate) {
-      this._mode = LoadingMode.Determinate;
-    } else {
-      this._mode = LoadingMode.Indeterminate;
-    }
+    this._mode = mode === LoadingMode.Determinate ? LoadingMode.Determinate : LoadingMode.Indeterminate;
   }
 
   /**
@@ -96,18 +86,20 @@ export class XMatLoadingDirective implements OnInit, OnDestroy {
    */
   @Input('xMatLoadingStrategy')
   set strategy(strategy: LoadingStrategy) {
-    if (strategy === LoadingStrategy.Overlay) {
-      this._strategy = LoadingStrategy.Overlay;
-    } else {
-      this._strategy = LoadingStrategy.Replace;
-    }
+    this._strategy = strategy === LoadingStrategy.Overlay ? LoadingStrategy.Overlay : LoadingStrategy.Replace;
   }
 
-  /**
-   * xMatLoadingColor?: "primary" | "accent" | "warn"
-   * Sets the theme color of the loading component. Defaults to "primary"
-   */
-  @Input('xMatLoadingColor') color: 'primary' | 'accent' | 'warn' = 'primary';
+  private _context: XMatLoadingContext = new XMatLoadingContext();
+
+  private _type: LoadingType;
+
+  private _mode: LoadingMode;
+
+  private _strategy: LoadingStrategy;
+
+  private _name: string;
+
+  private _loadingRef: ILoadingRef;
 
   constructor(
     private _viewContainerRef: ViewContainerRef,

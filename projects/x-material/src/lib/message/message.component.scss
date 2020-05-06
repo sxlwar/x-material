@@ -1,6 +1,7 @@
 :host {
   display: block;
   border-radius: 4px;
+
   .x-mat-message-wrapper {
     padding: 8px 16px;
     min-height: 52px;
@@ -11,6 +12,7 @@
     align-content: center;
     max-width: 100%;
     justify-content: flex-start;
+
     .x-mat-message-labels {
       flex: 1;
     }
@@ -19,6 +21,7 @@
 
 .x-mat-message-icon {
   margin-right: 16px;
+
   ::ng-deep [dir='rtl'] & {
     margin-left: 16px;
     margin-right: 0;

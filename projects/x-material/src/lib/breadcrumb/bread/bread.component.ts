@@ -6,19 +6,16 @@ import {
   selector: 'x-mat-bread, a[x-mat-bread]',
   styleUrls: ['./bread.component.scss'],
   templateUrl: './bread.component.html',
-  host: {
-    class: 'mat-button x-mat-bread',
-  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadComponent implements AfterViewInit {
-  private _displayCrumb: boolean = true;
+  private _displayCrumb = true;
 
-  private _width: number = 0;
+  private _width = 0;
 
-  private _displayIcon: boolean = true;
+  private _displayIcon = true;
 
-  private _separatorIcon: string = 'chevron_right';
+  private _separatorIcon = 'chevron_right';
 
   // Sets the icon url shown between breadcrumbs. Defaults to 'chevron_right'
   get separatorIcon(): string {
@@ -73,6 +70,11 @@ export class BreadComponent implements AfterViewInit {
     // Set the display to none on the component, just in case the end user is hiding
     // and showing them instead of the component doing itself for reasons like responsive
     return this._displayCrumb ? undefined : 'none';
+  }
+
+  @HostBinding('class')
+  get className(): string {
+    return 'mat-button x-mat-bread';
   }
 
   constructor(private _elementRef: ElementRef, private _changeDetectorRef: ChangeDetectorRef) {}

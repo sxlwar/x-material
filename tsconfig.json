@@ -1,12 +1,26 @@
 {
-  "extends": "xal-config/tsconfig",
+  "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "paths": {
       "x-material/*": ["projects/x-material/src/lib/*"],
       "@assets/*": ["projects/demo/src/assets/*"]
     }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
   }
 }

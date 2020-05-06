@@ -1,3 +1,4 @@
+/* tslint:disable:no-magic-numbers */
 import moment, { Moment } from 'moment';
 
 import { InjectionToken } from '@angular/core';

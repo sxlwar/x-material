@@ -51,6 +51,7 @@ export class XMatLoadingDirectiveConfig extends XMatLoadingConfig implements IXM
 @Injectable()
 export class XMatLoadingService {
   private _context: { [key: string]: ILoadingRef } = {};
+  // tslint:disable-next-line:no-any
   private _timeouts: { [key: string]: any } = {};
 
   constructor(private _loadingFactory: XMatLoadingFactory) {

@@ -1,3 +1,4 @@
+/* tslint:disable:cyclomatic-complexity no-magic-numbers */
 import moment, { Moment } from 'moment';
 
 import {
@@ -7,20 +8,15 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { XMatDatePickerComponent } from './date-picker.component';
+import { XMatDatePickerComponent, XMatSelectedDate } from './date-picker.component';
 import { LocaleConfig, Ranges } from './date-picker.config';
 import { LocaleService } from './locale.service';
 
 type ModelValue = string | { [key: string]: Moment };
 
 @Directive({
+  // tslint:disable-next-line
   selector: 'input[xMatDatePicker]',
-  host: {
-    '(keyup.esc)': 'hide()',
-    '(blur)': 'onBlur()',
-    '(click)': 'open()',
-    '(keyup)': 'inputChanged($event)',
-  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -59,7 +55,7 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   @Input() showClearButton: boolean;
 
   /**
-   * @description Set predefined date ranges the user can select from.
+   * Set predefined date ranges the user can select from.
    * Each key is the label for the range, and its value an array with two dates representing the bounds of the range
    *
    * @example
@@ -77,42 +73,42 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   @Input() ranges: Ranges | true;
 
   /**
-   * @description set to true if you want to display the ranges with the calendar.
+   * set to true if you want to display the ranges with the calendar.
    * Available only if the ranges is set.
    */
   @Input() alwaysShowCalendars: boolean;
 
   /**
-   * @description set to true if you want the calendar won't be closed after choosing a range
+   * set to true if you want the calendar won't be closed after choosing a range
    * Available only if the ranges is set.
    */
   @Input() keepCalendarOpeningWithRange: boolean;
 
   /**
-   * @description set to true if you want to display the range label on input
+   * set to true if you want to display the range label on input
    * Available only if the ranges is set.
    */
   @Input() showRangeLabelOnInput: boolean;
 
   /**
-   * @description set to true if you want to allow selection range from end date first
+   * set to true if you want to allow selection range from end date first
    * Available only if the ranges is set.
    */
   @Input() customRangeDirection: boolean;
 
   /**
-   * @description set to true if you want to lock start date and change only the end date
+   * set to true if you want to lock start date and change only the end date
    * Available only if the ranges is set.
    */
-  @Input() lockStartDate: boolean = false;
+  @Input() lockStartDate = false;
 
   /**
-   * @description position the calendar to the up or down form the input element;
+   * position the calendar to the up or down form the input element;
    */
   @Input() positionY: 'up' | 'down' = 'down';
 
   /**
-   * @description position the calendar form the input element;
+   * position the calendar form the input element;
    */
   @Input() positionX: 'left' | 'center' | 'right' | 'auto' = 'auto';
 
@@ -126,20 +122,20 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
 
   @Input() lastDayOfPreviousMonthClass: string;
 
-  @Input() showCancel: boolean = false;
+  @Input() showCancel = false;
 
-  @Input() timePicker: Boolean = false;
+  @Input() timePicker = false;
 
-  @Input() timePicker24Hour: Boolean = false;
+  @Input() timePicker24Hour = false;
 
-  @Input() timePickerIncrement: number = 1;
+  @Input() timePickerIncrement = 1;
 
-  @Input() timePickerSeconds: Boolean = false;
+  @Input() timePickerSeconds = false;
 
   @Input() closeOnAutoApply = true;
 
   /**
-   * @description local configurations;
+   * local configurations;
    */
   @Input() set locale(value: LocaleConfig) {
     this._locale = { ...this._localeService.config, ...value };
@@ -150,46 +146,41 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   }
 
   /**
-   * @description the start key you want for the start value; default: startDate
+   * the start key you want for the start value; default: startDate
    * the model would be { [startKey]: Moment, [endKey]: Moment }
    */
   @Input() set startKey(value: string) {
-    if (value !== null) {
-      this._startKey = value;
-    } else {
-      this._startKey = 'startDate';
-    }
+    this._startKey = value !== null ? value : 'startDate';
   }
 
   /**
-   * @description the end key you want for the end value; default: endDate
+   * the end key you want for the end value; default: endDate
    * the model would be { [startKey]: Moment, [endKey]: Moment }
    */
   @Input() set endKey(value: string) {
-    if (value !== null) {
-      this._endKey = value;
-    } else {
-      this._endKey = 'endDate';
-    }
+    this._endKey = value !== null ? value : 'endDate';
   }
 
+  // tslint:disable-next-line
   @Output('change') onChange: EventEmitter<ModelValue> = new EventEmitter();
 
   /**
-   * @description Fired when clicked on range, and send an object with range label and dates value
+   * Fired when clicked on range, and send an object with range label and dates value
    */
-  @Output('rangeClicked') rangeClicked: EventEmitter<ModelValue> = new EventEmitter();
+  // tslint:disable-next-line
+  @Output('rangeClicked') rangeClicked: EventEmitter<{ label: string; dates: [Moment, Moment] }> = new EventEmitter();
 
   /**
-   * @description Fires when the date model is updated, like applying (if you have activated the apply button),
+   * Fires when the date model is updated, like applying (if you have activated the apply button),
    * or when selecting a range or date without the apply button, and sends an object containing start and end date,
    * eg: { startDate: Moment, endDate: Moment }
    */
-  @Output('datesUpdated') datesUpdated: EventEmitter<ModelValue> = new EventEmitter();
+  // tslint:disable-next-line
+  @Output('datesUpdated') datesUpdated: EventEmitter<Omit<XMatSelectedDate, 'chosenLabel'>> = new EventEmitter();
 
-  @Output() startDateChanged: EventEmitter<Partial<ModelValue>> = new EventEmitter();
+  @Output() startDateChanged: EventEmitter<Pick<XMatSelectedDate, 'startDate'>> = new EventEmitter();
 
-  @Output() endDateChanged: EventEmitter<Partial<ModelValue>> = new EventEmitter();
+  @Output() endDateChanged: EventEmitter<Pick<XMatSelectedDate, 'endDate'>> = new EventEmitter();
 
   picker: XMatDatePickerComponent;
 
@@ -213,11 +204,12 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
 
   private _value: ModelValue;
 
+  // tslint:disable-next-line:no-any
   private localeDiffer: KeyValueDiffer<string, any>;
 
-  private _endKey: string = 'endDate';
+  private _endKey = 'endDate';
 
-  private _startKey: string = 'startDate';
+  private _startKey = 'startDate';
 
   constructor(
     public viewContainerRef: ViewContainerRef,
@@ -239,23 +231,23 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   }
 
   ngOnInit() {
-    this.picker.startDateChanged.asObservable().subscribe((itemChanged: any) => {
+    this.picker.startDateChanged.asObservable().subscribe((itemChanged: Pick<XMatSelectedDate, 'startDate'>) => {
       this.startDateChanged.emit(itemChanged);
     });
 
-    this.picker.endDateChanged.asObservable().subscribe((itemChanged: any) => {
+    this.picker.endDateChanged.asObservable().subscribe((itemChanged: Pick<XMatSelectedDate, 'endDate'>) => {
       this.endDateChanged.emit(itemChanged);
     });
 
-    this.picker.rangeClicked.asObservable().subscribe((range: any) => {
+    this.picker.rangeClicked.asObservable().subscribe((range: { label: string; dates: [Moment, Moment] }) => {
       this.rangeClicked.emit(range);
     });
 
-    this.picker.datesUpdated.asObservable().subscribe((range: any) => {
+    this.picker.datesUpdated.asObservable().subscribe((range: Omit<XMatSelectedDate, 'chosenLabel'>) => {
       this.datesUpdated.emit(range);
     });
 
-    this.picker.selectedDate.asObservable().subscribe((change: any) => {
+    this.picker.selectedDate.asObservable().subscribe((change: XMatSelectedDate) => {
       if (change) {
         const value = {};
 
@@ -306,7 +298,7 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   }
 
   /**
-   * @description Open datepicker from outside
+   * Open datepicker from outside
    * It is possible to open datepicker from outside.
    * You should create an input with attached datepicker directive and a button with "x-mat-date-picker-action"
    * class (to prevent triggering of clickOutside).
@@ -362,38 +354,18 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
     this.setValue(value);
   }
 
-  registerOnChange(fn: Function) {
+  // tslint:disable-next-line:no-any
+  registerOnChange(fn: (...args: any[]) => any) {
     this._onChange = fn;
   }
 
-  registerOnTouched(fn: Function) {
+  // tslint:disable-next-line:no-any
+  registerOnTouched(fn: (...args: any[]) => any) {
     this._onTouched = fn;
   }
 
-  private setValue(val: ModelValue) {
-    if (val) {
-      this.value = val;
-
-      if (val[this._startKey]) {
-        this.picker.setStartDate(val[this._startKey]);
-      }
-
-      if (val[this._endKey]) {
-        this.picker.setEndDate(val[this._endKey]);
-      }
-
-      this.picker.calculateChosenLabel();
-
-      if (this.picker.chosenLabel) {
-        this._el.nativeElement.value = this.picker.chosenLabel;
-      }
-    } else {
-      this.picker.clear();
-    }
-  }
-
   /**
-   * @description Set position of the calendar
+   * Set position of the calendar
    */
   setPosition(): void {
     let style: { top: string; left: string; right: string };
@@ -401,12 +373,10 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
     const container = this.picker.pickerContainer.nativeElement;
     const element = this._el.nativeElement;
 
-    if (this.positionY && this.positionY === 'up') {
-      containerTop = element.offsetTop - container.clientHeight + 'px';
-    } else {
-      containerTop = 'auto';
-    }
+    containerTop =
+      this.positionY && this.positionY === 'up' ? element.offsetTop - container.clientHeight + 'px' : 'auto';
 
+    // tslint:disable-next-line:prefer-conditional-expression
     if (this.positionX === 'right') {
       style = {
         top: containerTop,
@@ -450,9 +420,7 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
     }
   }
 
-  /**
-   * @ignore
-   */
+  // tslint:disable-next-line:no-any
   inputChanged(event: any) {
     if (event.target.tagName.toLowerCase() !== 'input' || !event.target.value.length) {
       return;
@@ -483,11 +451,11 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
   }
 
   /**
-   * @description For click outside of the calendar's container
+   * For click outside of the calendar's container
    * @param event event object
    */
-  @HostListener('document:click', ['$event'])
-  outsideClick(event: any): void {
+  // tslint:disable-next-line:no-any
+  @HostListener('document:click', ['$event']) outsideClick(event: any): void {
     if (!event.target) {
       return;
     }
@@ -498,6 +466,44 @@ export class XMatDatePickerDirective implements OnInit, OnChanges, DoCheck {
 
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.hide();
+    }
+  }
+
+  @HostListener('keyup.esc') hideCal() {
+    this.hide();
+  }
+
+  @HostListener('blur') blur() {
+    this.onBlur();
+  }
+
+  @HostListener('click') onClick() {
+    this.open();
+  }
+
+  @HostListener('keyup', ['$event']) onInputChanged(event) {
+    this.inputChanged(event);
+  }
+
+  private setValue(val: ModelValue) {
+    if (val) {
+      this.value = val;
+
+      if (val[this._startKey]) {
+        this.picker.setStartDate(val[this._startKey]);
+      }
+
+      if (val[this._endKey]) {
+        this.picker.setEndDate(val[this._endKey]);
+      }
+
+      this.picker.calculateChosenLabel();
+
+      if (this.picker.chosenLabel) {
+        this._el.nativeElement.value = this.picker.chosenLabel;
+      }
+    } else {
+      this.picker.clear();
     }
   }
 }

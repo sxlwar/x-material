@@ -4,11 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { XMatMessageComponent, XMatMessageContainerDirective } from './message.component';
 
-const XMat_MESSAGE: Type<any>[] = [XMatMessageComponent, XMatMessageContainerDirective];
+// tslint:disable-next-line:no-any
+const X_MAT_MESSAGE: Type<any>[] = [XMatMessageComponent, XMatMessageContainerDirective];
 
 @NgModule({
   imports: [CommonModule, MatIconModule],
-  declarations: XMat_MESSAGE,
-  exports: XMat_MESSAGE,
+  declarations: X_MAT_MESSAGE,
+  exports: X_MAT_MESSAGE,
 })
 export class XMatMessageModule {}

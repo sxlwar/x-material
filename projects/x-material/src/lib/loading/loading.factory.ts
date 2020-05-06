@@ -18,8 +18,11 @@ export interface IInternalLoadingOptions extends IXMatLoadingConfig {
 }
 
 export interface ILoadingRef {
+  // tslint:disable-next-line:no-any
   observable: Observable<any>;
+  // tslint:disable-next-line:no-any
   componentRef: ComponentRef<any>;
+  // tslint:disable-next-line:no-any
   subject?: Subject<any>;
   times?: number;
 }
@@ -45,7 +48,7 @@ export class XMatLoadingFactory {
     (<IInternalLoadingOptions>options).height = undefined;
     (<IInternalLoadingOptions>options).style = LoadingStyle.FullScreen;
     const loadingRef: ILoadingRef = this._initializeContext();
-    let loading: boolean = false;
+    let loading = false;
     let overlayRef: OverlayRef;
     loadingRef.observable.pipe(distinctUntilChanged()).subscribe((registered: number) => {
       if (registered > 0 && !loading) {
@@ -81,7 +84,8 @@ export class XMatLoadingFactory {
     (<IInternalLoadingOptions>options).height = undefined;
     (<IInternalLoadingOptions>options).style = LoadingStyle.Overlay;
     const loadingRef: ILoadingRef = this._createComponent(options);
-    let loading: boolean = false;
+    let loading = false;
+
     loadingRef.componentRef.instance.content = new TemplatePortal(templateRef, viewContainerRef);
     viewContainerRef.clear();
     viewContainerRef.insert(loadingRef.componentRef.hostView, 0);
@@ -115,9 +119,11 @@ export class XMatLoadingFactory {
       : undefined;
     (<IInternalLoadingOptions>options).style = LoadingStyle.None;
     const loadingRef: ILoadingRef = this._createComponent(options);
-    let loading: boolean = false;
+    let loading = false;
     // passing context so when the template is attached, we can keep the reference of the variables
     const contentRef: EmbeddedViewRef<object> = viewContainerRef.createEmbeddedView(templateRef, context);
+
+    // tslint:disable-next-line:cyclomatic-complexity
     loadingRef.observable.pipe(distinctUntilChanged()).subscribe((registered: number) => {
       if (registered > 0 && !loading) {
         loading = true;
@@ -145,6 +151,7 @@ export class XMatLoadingFactory {
         contentRef.markForCheck();
       }
     });
+
     return loadingRef;
   }
 
@@ -178,6 +185,7 @@ export class XMatLoadingFactory {
    * Initialize context for loading component.
    */
   private _initializeContext(): ILoadingRef {
+    // tslint:disable-next-line:no-any
     const subject: Subject<any> = new Subject<any>();
     return {
       observable: subject.asObservable(),

@@ -24,7 +24,7 @@ export enum LoadingStyle {
   None = 'none',
 }
 
-export const X_MAT_CIRCLE_DIAMETER: number = 100;
+export const X_MAT_CIRCLE_DIAMETER = 100;
 
 @Component({
   selector: 'x-mat-loading',
@@ -33,46 +33,16 @@ export const X_MAT_CIRCLE_DIAMETER: number = 100;
   animations: [xMatFadeInOutAnimation],
 })
 export class XMatLoadingComponent implements DoCheck {
-  private _mode: LoadingMode = LoadingMode.Indeterminate;
-
-  private defaultMode: LoadingMode = LoadingMode.Indeterminate;
-
-  private _value: number = 0;
-
-  private circleDiameter: number = X_MAT_CIRCLE_DIAMETER;
-
   /**
    * Flag for animation
    */
-  animation: boolean = false;
+  animation = false;
 
   /**
    * Content injected into loading component.
    */
+  // tslint:disable-next-line:no-any
   content: TemplatePortal<any>;
-
-  /**
-   * Sets mode of [XMatLoadingComponent] to LoadingMode.Determinate or LoadingMode.Indeterminate
-   */
-  set mode(mode: LoadingMode) {
-    this.defaultMode = mode;
-  }
-
-  get mode(): LoadingMode {
-    return this._mode;
-  }
-
-  /**
-   * Sets value of [XMatLoadingComponent] if mode is 'LoadingMode.Determinate'
-   */
-  set value(value: number) {
-    this._value = value;
-    // Check for changes for `OnPush` change detection
-    this.changeDetectorRef.markForCheck();
-  }
-  get value(): number {
-    return this._value;
-  }
 
   style: LoadingStyle = LoadingStyle.None;
 
@@ -93,6 +63,14 @@ export class XMatLoadingComponent implements DoCheck {
    * Sets theme color of [XMatLoadingComponent] rendered.
    */
   color: 'primary' | 'accent' | 'warn' = 'primary';
+
+  private _mode: LoadingMode = LoadingMode.Indeterminate;
+
+  private defaultMode: LoadingMode = LoadingMode.Indeterminate;
+
+  private _value = 0;
+
+  private circleDiameter: number = X_MAT_CIRCLE_DIAMETER;
 
   constructor(private elementRef: ElementRef, private changeDetectorRef: ChangeDetectorRef) {}
 
@@ -121,6 +99,7 @@ export class XMatLoadingComponent implements DoCheck {
 
   getCircleStrokeWidth(): number {
     // we calculate the stroke width by setting it as 10% of its diameter
+    // tslint:disable-next-line:no-magic-numbers
     const strokeWidth: number = this.getCircleDiameter() / 10;
     return Math.abs(strokeWidth);
   }
@@ -190,11 +169,31 @@ export class XMatLoadingComponent implements DoCheck {
     }
 
     // if the diameter is over X_MAT_CIRCLE_DIAMETER, we set X_MAT_CIRCLE_DIAMETER
-    if (!!diameter && diameter <= X_MAT_CIRCLE_DIAMETER) {
-      this.circleDiameter = Math.floor(diameter);
-    } else {
-      this.circleDiameter = X_MAT_CIRCLE_DIAMETER;
-    }
+    this.circleDiameter =
+      !!diameter && diameter <= X_MAT_CIRCLE_DIAMETER ? Math.floor(diameter) : X_MAT_CIRCLE_DIAMETER;
+  }
+
+  /**
+   * Sets mode of [XMatLoadingComponent] to LoadingMode.Determinate or LoadingMode.Indeterminate
+   */
+  set mode(mode: LoadingMode) {
+    this.defaultMode = mode;
+  }
+
+  get mode(): LoadingMode {
+    return this._mode;
+  }
+
+  /**
+   * Sets value of [XMatLoadingComponent] if mode is 'LoadingMode.Determinate'
+   */
+  set value(value: number) {
+    this._value = value;
+    // Check for changes for `OnPush` change detection
+    this.changeDetectorRef.markForCheck();
+  }
+  get value(): number {
+    return this._value;
   }
 
   /**

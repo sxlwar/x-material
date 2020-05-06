@@ -9,6 +9,7 @@ import { NgModule, Type } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatIconModule, MatInputModule, MatSelectModule } from '@angular/material';
 
+// tslint:disable-next-line:no-any
 const config: Type<any>[] = [
   CommonModule,
   FormsModule,

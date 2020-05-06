@@ -9,8 +9,10 @@
     td.in-range {
       background-color: mat-color($accent, 0.1);
     }
+
     td.active {
       background-color: mat-color($primary);
+
       &:hover {
         background-color: mat-color($primary);
       }

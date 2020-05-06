@@ -19,5 +19,8 @@
     "statusBar.border": "#dd0531",
     "titleBar.border": "#dd0531"
   },
-  "peacock.color": "#dd0531"
+  "peacock.color": "#dd0531",
+  "cSpell.words": [
+    "cyclomatic"
+  ]
 }

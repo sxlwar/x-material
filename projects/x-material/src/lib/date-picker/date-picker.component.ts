@@ -1,8 +1,9 @@
+/* tslint:disable:cyclomatic-complexity no-magic-numbers */
 import moment, { DurationInputArg1, Moment } from 'moment';
 
 import {
-    ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output,
-    ViewChild, ViewEncapsulation
+    ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, HostListener, Input, OnInit,
+    Output, ViewChild, ViewEncapsulation
 } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -24,9 +25,6 @@ export interface XMatSelectedDate {
   selector: 'x-mat-date-picker',
   styleUrls: ['./date-picker.component.scss'],
   templateUrl: './date-picker.component.html',
-  host: {
-    '(click)': 'handleInternalClick($event)',
-  },
   encapsulation: ViewEncapsulation.None,
   providers: [
     {
@@ -37,6 +35,57 @@ export interface XMatSelectedDate {
   ],
 })
 export class XMatDatePickerComponent implements OnInit {
+  chosenLabel: string;
+
+  // tslint:disable-next-line:no-any
+  calendarVariables: { left: any; right: any } = { left: {}, right: {} };
+
+  /**
+   * @description for storing tool tip text
+   */
+  toolTipText: string[] = [];
+
+  // tslint:disable-next-line:no-any
+  timePickerVariables: { left: any; right: any } = { left: {}, right: {} };
+
+  dateRangePicker: { start: FormControl; end: FormControl } = { start: new FormControl(), end: new FormControl() };
+
+  applyBtn: { disabled: boolean } = { disabled: false };
+
+  // used in template for compile time support of enum values.
+  sideEnum = SideEnum;
+
+  chosenRange: string;
+
+  rangesArray: string[] = [];
+
+  // some state information
+  isShown = false;
+
+  inline = true;
+
+  // tslint:disable-next-line:no-any
+  leftCalendar: any = {};
+
+  // tslint:disable-next-line:no-any
+  rightCalendar: any = {};
+
+  showCalInRanges = false;
+
+  nowHoveredDate = null;
+
+  pickingDate = false;
+
+  /**
+   * should get some options from user;
+   */
+  // tslint:disable-next-line:no-any
+  options: any = {};
+
+  _ranges: Ranges = {};
+
+  _locale: LocaleConfig = {};
+
   /**
    * @description range start date
    */
@@ -50,7 +99,7 @@ export class XMatDatePickerComponent implements OnInit {
   /**
    * @description set max number of the date we can choose
    */
-  @Input() dateLimit: number = null;
+  @Input() dateLimit = null;
 
   /**
    * @description minimal date
@@ -65,32 +114,32 @@ export class XMatDatePickerComponent implements OnInit {
   /**
    * @description auto select date without apply button
    */
-  @Input() autoApply: boolean = false;
+  @Input() autoApply = false;
 
   /**
    * @description is single date picker mode
    */
-  @Input() isRangePicker: boolean = false;
+  @Input() isRangePicker = false;
 
   /**
    * @description display clear button or not
    */
-  @Input() showClearButton: boolean = false;
+  @Input() showClearButton = false;
 
   /**
    * @description month year dropdown available
    */
-  @Input() showDropdown: boolean = false;
+  @Input() showDropdown = false;
 
   /**
    * @description week number of the year
    */
-  @Input() showWeekNumbers: boolean = false;
+  @Input() showWeekNumbers = false;
 
   /**
    * @description iso week number of the year
    */
-  @Input() showISOWeekNumbers: boolean = false;
+  @Input() showISOWeekNumbers = false;
 
   /**
    * @description display cancel button or not
@@ -100,12 +149,12 @@ export class XMatDatePickerComponent implements OnInit {
   /**
    * @description link the control buttons of the calendars
    */
-  @Input() linkedCalendars: boolean = false;
+  @Input() linkedCalendars = false;
 
   /**
    * @ignore
    */
-  @Input() autoUpdateInput: boolean = true;
+  @Input() autoUpdateInput = true;
 
   /**
    * @ignore
@@ -115,13 +164,13 @@ export class XMatDatePickerComponent implements OnInit {
   /**
    * @description set to enable timer picker;
    */
-  @Input() timePicker: boolean = false;
+  @Input() timePicker = false;
 
   /**
    * @description set to true if you want to set the time picker to 24h instead of having AM and PM
    * Available only if timePicker is set to true
    */
-  @Input() timePicker24Hour: boolean = false;
+  @Input() timePicker24Hour = false;
 
   /**
    * @description set the value increment of the minutes
@@ -133,7 +182,7 @@ export class XMatDatePickerComponent implements OnInit {
    * @description set true if you want do display second's select
    * Available only if timePicker is set to true
    */
-  @Input() timePickerSeconds: boolean = false;
+  @Input() timePickerSeconds = false;
 
   /**
    * @description add a custom class for all first day of the month
@@ -159,83 +208,6 @@ export class XMatDatePickerComponent implements OnInit {
    * @description add a custom class for the last day of the previous month
    */
   @Input() lastDayOfPreviousMonthClass: string = null;
-
-  /**
-   * @param date Moment
-   * @return default is false means all dates are valid.
-   * @description A function that is passed each date in calendar(or calendars at date range picker mode) before they are displayed,
-   * and may return true or false to indicate whether that date should be available for selection or not.
-   */
-  @Input()
-  isInvalidDate(_: Moment): boolean {
-    return false;
-  }
-
-  /**
-   * @param date Moment
-   * @returns false: do nothing; string or string[]: add custom css class(classes) to the date
-   * @description A function that is passed each date in the calendars before they are displayed,
-   * and may return a string or array of CSS class names to apply to that date's calendar cell
-   */
-  @Input()
-  isCustomDate(_: Moment): false | string | string[] {
-    return false;
-  }
-
-  /**
-   * @param date Moment
-   * @returns text tooltip message; default is null;
-   * @description A function that is passed each date in the two calendars before they are displayed,
-   * and may return a text to be displayed as a tooltip.
-   */
-  @Input()
-  addTooltipForDate(_: Moment): string {
-    return null;
-  }
-
-  /**
-   * @description locale config object
-   */
-  @Input() set locale(value: LocaleConfig) {
-    this._locale = { ...this._localeService.config, ...value };
-  }
-
-  get locale(): LocaleConfig {
-    return this._locale;
-  }
-
-  /**
-   * @description Set predefined date ranges the user can select from.
-   * Each key is the label for the range, and its value an array with two dates representing the bounds of the range
-   *
-   * @example
-   * ```ts
-   * const ranges: Ranges = {
-   *  'Today': [moment(), moment()],
-   *  'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-   *  'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-   *  'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-   *  'This Month': [moment().startOf('month'), moment().endOf('month')],
-   *  'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-   * }
-   * ```
-   */
-  @Input() set ranges(value: Ranges | true) {
-    if (value === true) {
-      this._ranges = defaultRangesConfig;
-      this.showCustomRangeLabel = true;
-    }
-
-    if (typeof value === 'object') {
-      this._ranges = value;
-    }
-
-    this.renderRanges();
-  }
-
-  get ranges(): Ranges | true {
-    return this._ranges;
-  }
 
   /**
    * @description set to true if you want to display the ranges with the calendar.
@@ -305,60 +277,88 @@ export class XMatDatePickerComponent implements OnInit {
 
   @Output() endDateChanged: EventEmitter<Pick<XMatSelectedDate, 'endDate'>> = new EventEmitter();
 
-  /**
-   * @ignore
-   */
   @ViewChild('pickerContainer', { static: true }) pickerContainer: ElementRef;
-
-  chosenLabel: string;
-
-  calendarVariables: { left: any; right: any } = { left: {}, right: {} };
-
-  /**
-   * @description for storing tool tip text
-   */
-  toolTipText: string[] = [];
-
-  timePickerVariables: { left: any; right: any } = { left: {}, right: {} };
-
-  dateRangePicker: { start: FormControl; end: FormControl } = { start: new FormControl(), end: new FormControl() };
-
-  applyBtn: { disabled: boolean } = { disabled: false };
-
-  // used in template for compile time support of enum values.
-  sideEnum = SideEnum;
-
-  chosenRange: string;
-
-  rangesArray: string[] = [];
-
-  // some state information
-  isShown: boolean = false;
-
-  inline = true;
-
-  leftCalendar: any = {};
-
-  rightCalendar: any = {};
-
-  showCalInRanges: boolean = false;
-
-  nowHoveredDate = null;
-
-  pickingDate: boolean = false;
-
-  /**
-   * should get some options from user;
-   */
-  options: any = {};
-
-  _ranges: Ranges = {};
-
-  _locale: LocaleConfig = {};
 
   private _old: { start: Moment; end: Moment } = { start: null, end: null };
 
   constructor(private _ref: ChangeDetectorRef, private _localeService: LocaleService) {}
+
+  /**
+   * @param date Moment
+   * @return default is false means all dates are valid.
+   * @description A function that is passed each date in calendar(or calendars at date range picker mode) before they are displayed,
+   * and may return true or false to indicate whether that date should be available for selection or not.
+   */
+  @Input() isInvalidDate(_: Moment): boolean {
+    return false;
+  }
+
+  /**
+   * @param date Moment
+   * @returns false: do nothing; string or string[]: add custom css class(classes) to the date
+   * @description A function that is passed each date in the calendars before they are displayed,
+   * and may return a string or array of CSS class names to apply to that date's calendar cell
+   */
+  @Input() isCustomDate(_: Moment): false | string | string[] {
+    return false;
+  }
+
+  /**
+   * @param date Moment
+   * @returns text tooltip message; default is null;
+   * @description A function that is passed each date in the two calendars before they are displayed,
+   * and may return a text to be displayed as a tooltip.
+   */
+  @Input() addTooltipForDate(_: Moment): string {
+    return null;
+  }
+  /**
+   * @description locale config object
+   */
+  @Input() set locale(value: LocaleConfig) {
+    this._locale = { ...this._localeService.config, ...value };
+  }
+
+  get locale(): LocaleConfig {
+    return this._locale;
+  }
+
+  /**
+   * @description Set predefined date ranges the user can select from.
+   * Each key is the label for the range, and its value an array with two dates representing the bounds of the range
+   *
+   * @example
+   * ```ts
+   * const ranges: Ranges = {
+   *  'Today': [moment(), moment()],
+   *  'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+   *  'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+   *  'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+   *  'This Month': [moment().startOf('month'), moment().endOf('month')],
+   *  'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+   * }
+   * ```
+   */
+  @Input() set ranges(value: Ranges | true) {
+    if (value === true) {
+      this._ranges = defaultRangesConfig;
+      this.showCustomRangeLabel = true;
+    }
+
+    if (typeof value === 'object') {
+      this._ranges = value;
+    }
+
+    this.renderRanges();
+  }
+
+  get ranges(): Ranges | true {
+    return this._ranges;
+  }
+
+  @HostListener('click', ['$event']) onHostClicked(event) {
+    this.handleInternalClick(event);
+  }
 
   ngOnInit() {
     this._buildLocale();
@@ -408,17 +408,14 @@ export class XMatDatePickerComponent implements OnInit {
     if (typeof this.ranges === 'object') {
       for (const range in this.ranges) {
         if (this.ranges[range]) {
-          if (typeof this.ranges[range][0] === 'string') {
-            start = moment(this.ranges[range][0], this.locale.format);
-          } else {
-            start = moment(this.ranges[range][0]);
-          }
-
-          if (typeof this.ranges[range][1] === 'string') {
-            end = moment(this.ranges[range][1], this.locale.format);
-          } else {
-            end = moment(this.ranges[range][1]);
-          }
+          start =
+            typeof this.ranges[range][0] === 'string'
+              ? moment(this.ranges[range][0], this.locale.format)
+              : moment(this.ranges[range][0]);
+          end =
+            typeof this.ranges[range][1] === 'string'
+              ? moment(this.ranges[range][1], this.locale.format)
+              : moment(this.ranges[range][1]);
 
           // If the start or end date exceed those allowed by the minDate or maxSpan
           // options, shorten the range to the allowable period.
@@ -495,7 +492,7 @@ export class XMatDatePickerComponent implements OnInit {
       // don't have an end date, use the start date then put the selected time for the right side as the time
       selected = this._getDateWithTime(this.startDate, SideEnum.right);
       if (selected.isBefore(this.startDate)) {
-        selected = this.startDate.clone(); //set it back to the start date the time was backwards
+        selected = this.startDate.clone(); // set it back to the start date the time was backwards
       }
       minDate = this.startDate;
     }
@@ -519,12 +516,13 @@ export class XMatDatePickerComponent implements OnInit {
 
     // generate hours
     for (let i = start; i <= end; i++) {
-      let i_in_24 = i;
+      let iIn24 = i;
+
       if (!this.timePicker24Hour) {
-        i_in_24 = selected.hour() >= 12 ? (i === 12 ? 12 : i + 12) : i === 12 ? 0 : i;
+        iIn24 = selected.hour() >= 12 ? (i === 12 ? 12 : i + 12) : i === 12 ? 0 : i;
       }
 
-      const time = selected.clone().hour(i_in_24);
+      const time = selected.clone().hour(iIn24);
       let disabled = false;
       if (minDate && time.minute(59).isBefore(minDate)) {
         disabled = true;
@@ -534,7 +532,7 @@ export class XMatDatePickerComponent implements OnInit {
       }
 
       this.timePickerVariables[side].hours.push(i);
-      if (i_in_24 === selected.hour() && !disabled) {
+      if (iIn24 === selected.hour() && !disabled) {
         this.timePickerVariables[side].selectedHour = i;
       } else if (disabled) {
         this.timePickerVariables[side].disabledHours.push(i);
@@ -610,17 +608,16 @@ export class XMatDatePickerComponent implements OnInit {
       ) {
         this.timePickerVariables[side].pmDisabled = true;
       }
-      if (selected.hour() >= 12) {
-        this.timePickerVariables[side].ampmModel = 'PM';
-      } else {
-        this.timePickerVariables[side].ampmModel = 'AM';
-      }
+
+      this.timePickerVariables[side].ampmModel = selected.hour() >= 12 ? 'PM' : 'AM';
     }
+
     this.timePickerVariables[side].selected = selected;
   }
 
   renderCalendar(side: SideEnum) {
     // side enum
+    // tslint:disable-next-line:no-any
     const mainCalendar: any = side === SideEnum.left ? this.leftCalendar : this.rightCalendar;
     const month = mainCalendar.month.month();
     const year = mainCalendar.month.year();
@@ -638,6 +635,7 @@ export class XMatDatePickerComponent implements OnInit {
       .year();
     const daysInLastMonth = moment([lastYear, lastMonth]).daysInMonth();
     const dayOfWeek = firstDay.day();
+    // tslint:disable-next-line:no-any
     const calendar: any = []; // initialize a 6 rows x 7 columns array for the calendar
 
     calendar.firstDay = firstDay;
@@ -659,6 +657,7 @@ export class XMatDatePickerComponent implements OnInit {
 
     let curDate = moment([lastYear, lastMonth, startDay, 12, minute, second]);
 
+    // tslint:disable-next-line:one-variable-per-declaration
     for (let i = 0, col = 0, row = 0; i < 42; i++, col++, curDate = moment(curDate).add(24, 'hour')) {
       if (i > 0 && col % 7 === 0) {
         col = 0;
@@ -714,25 +713,25 @@ export class XMatDatePickerComponent implements OnInit {
     }
 
     this.calendarVariables[side] = {
-      month: month,
-      year: year,
-      hour: hour,
-      minute: minute,
-      second: second,
-      daysInMonth: daysInMonth,
-      firstDay: firstDay,
-      lastDay: lastDay,
-      lastMonth: lastMonth,
-      lastYear: lastYear,
-      daysInLastMonth: daysInLastMonth,
-      dayOfWeek: dayOfWeek,
+      month,
+      year,
+      hour,
+      minute,
+      second,
+      daysInMonth,
+      firstDay,
+      lastDay,
+      lastMonth,
+      lastYear,
+      daysInLastMonth,
+      dayOfWeek,
       // other vars
       calRows: Array.from(Array(6).keys()),
       calCols: Array.from(Array(7).keys()),
       classes: {},
-      minDate: minDate,
-      maxDate: maxDate,
-      calendar: calendar,
+      minDate,
+      maxDate,
+      calendar,
     };
 
     if (this.showDropdown) {
@@ -744,16 +743,18 @@ export class XMatDatePickerComponent implements OnInit {
       const inMinYear = currentYear === minYear;
       const inMaxYear = currentYear === maxYear;
       const years = [];
+
       for (let y = minYear; y <= maxYear; y++) {
         years.push(y);
       }
+
       this.calendarVariables[side].dropdowns = {
-        currentMonth: currentMonth,
-        currentYear: currentYear,
-        maxYear: maxYear,
-        minYear: minYear,
-        inMinYear: inMinYear,
-        inMaxYear: inMaxYear,
+        currentMonth,
+        currentYear,
+        maxYear,
+        minYear,
+        inMinYear,
+        inMaxYear,
         monthArrays: Array.from(Array(12).keys()),
         yearArrays: years,
       };
@@ -941,19 +942,17 @@ export class XMatDatePickerComponent implements OnInit {
   updateElement() {
     const format = this.locale.displayFormat ? this.locale.displayFormat : this.locale.format;
 
+    // tslint:disable-next-line:prefer-conditional-expression
     if (this.isRangePicker && this.autoUpdateInput) {
       if (this.startDate && this.endDate) {
         // if we use ranges and should show range label on input
-        if (
+        this.chosenLabel =
           this.rangesArray.length &&
           this.showRangeLabelOnInput === true &&
           this.chosenRange &&
           this.locale.customRangeLabel !== this.chosenRange
-        ) {
-          this.chosenLabel = this.chosenRange;
-        } else {
-          this.chosenLabel = this.startDate.format(format) + this.locale.separator + this.endDate.format(format);
-        }
+            ? this.chosenLabel
+            : this.startDate.format(format) + this.locale.separator + this.endDate.format(format);
       }
     } else if (this.autoUpdateInput) {
       this.chosenLabel = this.startDate.format(format);
@@ -1005,11 +1004,7 @@ export class XMatDatePickerComponent implements OnInit {
       }
 
       if (customRange) {
-        if (this.showCustomRangeLabel) {
-          this.chosenRange = this.locale.customRangeLabel;
-        } else {
-          this.chosenRange = null;
-        }
+        this.chosenRange = this.showCustomRangeLabel ? this.locale.customRangeLabel : null;
         // if custom label: show calendar
         this.showCalInRanges = true;
       }
@@ -1079,6 +1074,7 @@ export class XMatDatePickerComponent implements OnInit {
    * @param yearEvent get value in event.target.value
    * @param side left or right
    */
+  // tslint:disable-next-line:no-any
   yearChanged(yearEvent: any, side: SideEnum) {
     const month = this.calendarVariables[side].dropdowns.currentMonth;
     const year = parseInt(yearEvent.target.value, 10);
@@ -1095,14 +1091,15 @@ export class XMatDatePickerComponent implements OnInit {
     let hour = parseInt(this.timePickerVariables[side].selectedHour, 10);
     const minute = parseInt(this.timePickerVariables[side].selectedMinute, 10);
     const second = this.timePickerSeconds ? parseInt(this.timePickerVariables[side].selectedSecond, 10) : 0;
+    const compareHour = 12;
 
     if (!this.timePicker24Hour) {
       const ampm = this.timePickerVariables[side].ampmModel;
 
-      if (ampm === 'PM' && hour < 12) {
-        hour += 12;
+      if (ampm === 'PM' && hour < compareHour) {
+        hour += compareHour;
       }
-      if (ampm === 'AM' && hour === 12) {
+      if (ampm === 'AM' && hour === compareHour) {
         hour = 0;
       }
     }
@@ -1356,7 +1353,7 @@ export class XMatDatePickerComponent implements OnInit {
         this.isShown = false; // hide calendars
       }
 
-      this.rangeClicked.emit({ label: label, dates: dates });
+      this.rangeClicked.emit({ label, dates });
 
       if (!this.keepCalendarOpeningWithRange || this.autoApply) {
         this.clickApply();
@@ -1437,7 +1434,6 @@ export class XMatDatePickerComponent implements OnInit {
 
   /**
    * update the locale options
-   * @param locale
    */
   updateLocale(locale: LocaleConfig) {
     for (const key in locale) {
@@ -1490,23 +1486,39 @@ export class XMatDatePickerComponent implements OnInit {
   }
 
   /**
-   *
+   * Find out if the current calendar row has current month days
+   * (as opposed to consisting of only previous/next month days)
+   */
+  hasCurrentMonthDays(currentMonth, row) {
+    for (let day = 0; day < 7; day++) {
+      if (row[day].month() === currentMonth) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * @param date the date to add time
    * @param side left or right
    */
   private _getDateWithTime(date, side: SideEnum): Moment {
     let hour = parseInt(this.timePickerVariables[side].selectedHour, 10);
+    const compareHour = 12;
+
     if (!this.timePicker24Hour) {
       const ampm = this.timePickerVariables[side].ampmModel;
-      if (ampm === 'PM' && hour < 12) {
-        hour += 12;
+      if (ampm === 'PM' && hour < compareHour) {
+        hour += compareHour;
       }
-      if (ampm === 'AM' && hour === 12) {
+      if (ampm === 'AM' && hour === compareHour) {
         hour = 0;
       }
     }
+
     const minute = parseInt(this.timePickerVariables[side].selectedMinute, 10);
     const second = this.timePickerSeconds ? parseInt(this.timePickerVariables[side].selectedSecond, 10) : 0;
+
     return date
       .clone()
       .hour(hour)
@@ -1518,32 +1530,37 @@ export class XMatDatePickerComponent implements OnInit {
    */
   private _buildLocale() {
     this.locale = { ...this._localeService.config, ...this.locale };
+
     if (!this.locale.format) {
-      if (this.timePicker) {
-        this.locale.format = moment.localeData().longDateFormat('lll');
-      } else {
-        this.locale.format = moment.localeData().longDateFormat('L');
-      }
+      this.locale.format = this.timePicker
+        ? moment.localeData().longDateFormat('lll')
+        : moment.localeData().longDateFormat('L');
     }
   }
 
   private _buildCells(calendar, side: SideEnum) {
     for (let row = 0; row < 6; row++) {
       this.calendarVariables[side].classes[row] = {};
+
       const rowClasses = [];
+
       if (this.emptyWeekRowClass && !this.hasCurrentMonthDays(this.calendarVariables[side].month, calendar[row])) {
         rowClasses.push(this.emptyWeekRowClass);
       }
+
       for (let col = 0; col < 7; col++) {
         const classes = [];
-        // highlight today's date
+
         if (calendar[row][col].isSame(new Date(), 'day')) {
+          // highlight today's date
           classes.push('today');
         }
-        // highlight weekends
+
         if (calendar[row][col].isoWeekday() > 5) {
+          // highlight weekends
           classes.push('weekend');
         }
+
         // grey out the dates in other months displayed at beginning and end of this calendar
         if (calendar[row][col].month() !== calendar[1][1].month()) {
           classes.push('off');
@@ -1566,6 +1583,7 @@ export class XMatDatePickerComponent implements OnInit {
             classes.push(this.firstDayOfNextMonthClass);
           }
         }
+
         // mark the first day of the current month with a custom class
         if (
           this.firstMonthDayClass &&
@@ -1574,6 +1592,7 @@ export class XMatDatePickerComponent implements OnInit {
         ) {
           classes.push(this.firstMonthDayClass);
         }
+
         // mark the last day of the current month with a custom class
         if (
           this.lastMonthDayClass &&
@@ -1582,10 +1601,12 @@ export class XMatDatePickerComponent implements OnInit {
         ) {
           classes.push(this.lastMonthDayClass);
         }
+
         // don't allow selection of dates before the minimum date
         if (this.minDate && calendar[row][col].isBefore(this.minDate, 'day')) {
           classes.push('off', 'disabled');
         }
+
         // don't allow selection of dates after the maximum date
         if (
           this.calendarVariables[side].maxDate &&
@@ -1593,18 +1614,22 @@ export class XMatDatePickerComponent implements OnInit {
         ) {
           classes.push('off', 'disabled');
         }
+
         // don't allow selection of date if a custom function decides it's invalid
         if (this.isInvalidDate(calendar[row][col])) {
           classes.push('off', 'disabled', 'invalid');
         }
+
         // highlight the currently selected start date
         if (this.startDate && calendar[row][col].format('YYYY-MM-DD') === this.startDate.format('YYYY-MM-DD')) {
           classes.push('active', 'start-date');
         }
+
         // highlight the currently selected end date
         if (this.endDate != null && calendar[row][col].format('YYYY-MM-DD') === this.endDate.format('YYYY-MM-DD')) {
           classes.push('active', 'end-date');
         }
+
         // highlight dates in-between the selected dates
         if (
           ((this.nowHoveredDate != null && this.pickingDate) || this.endDate != null) &&
@@ -1614,8 +1639,10 @@ export class XMatDatePickerComponent implements OnInit {
         ) {
           classes.push('in-range');
         }
+
         // apply custom classes for this date
         const isCustom = this.isCustomDate(calendar[row][col]);
+
         if (isCustom !== false) {
           if (typeof isCustom === 'string') {
             classes.push(isCustom);
@@ -1623,26 +1650,27 @@ export class XMatDatePickerComponent implements OnInit {
             Array.prototype.push.apply(classes, isCustom);
           }
         }
+
         // apply custom tooltip for this date
         const isTooltip = this.addTooltipForDate(calendar[row][col]);
-        if (isTooltip) {
-          if (typeof isTooltip === 'string') {
-            this.toolTipText[calendar[row][col]] = isTooltip; // setting toolTipText for custom date
-          } else {
-            this.toolTipText[calendar[row][col]] = 'Put the tooltip as the returned value of addTooltipForDate';
-          }
-        } else {
-          this.toolTipText[calendar[row][col]] = '';
-        }
+
+        this.toolTipText[calendar[row][col]] = isTooltip
+          ? typeof isTooltip === 'string'
+            ? isTooltip
+            : 'Put the tooltip as the returned value of addTooltipForDate'
+          : '';
+
         // store classes var
-        let cname = '',
-          disabled = false;
-        for (let i = 0; i < classes.length; i++) {
-          cname += classes[i] + ' ';
-          if (classes[i] === 'disabled') {
+        let cname = '';
+        let disabled = false;
+
+        for (const iterator of classes) {
+          cname += iterator + ' ';
+          if (iterator === 'disabled') {
             disabled = true;
           }
         }
+
         if (!disabled) {
           cname += 'available';
         }
@@ -1650,18 +1678,5 @@ export class XMatDatePickerComponent implements OnInit {
       }
       this.calendarVariables[side].classes[row].classList = rowClasses.join(' ');
     }
-  }
-
-  /**
-   * Find out if the current calendar row has current month days
-   * (as opposed to consisting of only previous/next month days)
-   */
-  hasCurrentMonthDays(currentMonth, row) {
-    for (let day = 0; day < 7; day++) {
-      if (row[day].month() === currentMonth) {
-        return true;
-      }
-    }
-    return false;
   }
 }

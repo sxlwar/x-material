@@ -1,6 +1,7 @@
 .router-link-active {
   color: skyblue;
   position: relative;
+
   &::after {
     content: '';
     position: absolute;
@@ -23,6 +24,7 @@
     width: 200px;
     height: 100vh;
     border-right: 1px solid lightgray;
+
     a {
       padding: 5px;
       text-decoration: none;

@@ -1,8 +1,10 @@
 :host {
   display: block;
   width: 100%;
+
   &.breadcrumb {
     white-space: nowrap;
+
     ::ng-deep > a {
       text-decoration: none;
     }

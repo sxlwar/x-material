@@ -3,7 +3,7 @@ import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 
 import {
     AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren,
-    DoCheck, ElementRef, Input, OnDestroy, OnInit, QueryList
+    DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, QueryList
 } from '@angular/core';
 
 import { BreadComponent } from './bread/bread.component';
@@ -12,9 +12,6 @@ import { BreadComponent } from './bread/bread.component';
   selector: 'x-mat-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
-  host: {
-    class: 'breadcrumb',
-  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, OnDestroy {
@@ -26,15 +23,20 @@ export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, O
     this.setCrumbIcons();
   }
 
+  get separatorIcon(): string {
+    return this._separatorIcon;
+  }
+
+  @HostBinding('class')
+  get className(): string {
+    return 'breadcrumb';
+  }
+
   // all the sub components, which are the individual breadcrumbs
   @ContentChildren(BreadComponent, { descendants: true }) _breadcrumbs: QueryList<BreadComponent>;
 
   // the list of hidden breadcrumbs not shown right now (responsive)
   hiddenBreadcrumbs: BreadComponent[] = [];
-
-  get separatorIcon(): string {
-    return this._separatorIcon;
-  }
 
   private _resizeSubscription: Subscription = Subscription.EMPTY;
 
@@ -42,14 +44,15 @@ export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, O
 
   private _contentChildrenSub: Subscription;
 
-  private _resizing: boolean = false;
+  private _resizing = false;
 
-  private _separatorIcon: string = 'chevron_right';
+  private _separatorIcon = 'chevron_right';
 
   constructor(private _elementRef: ElementRef, private _changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this._resizeSubscription = merge(
+      // tslint:disable-next-line:no-magic-numbers
       fromEvent(window, 'resize').pipe(debounceTime(10)),
       this._widthSubject.asObservable().pipe(distinctUntilChanged())
     ).subscribe(() => {
@@ -59,6 +62,7 @@ export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, O
           this._calculateVisibility();
           this._resizing = false;
           this._changeDetectorRef.markForCheck();
+          // tslint:disable-next-line:no-magic-numbers
         }, 100);
       }
     });
@@ -130,7 +134,7 @@ export class BreadcrumbComponent implements OnInit, DoCheck, AfterContentInit, O
 
   private _calculateVisibility(): void {
     const crumbsArray: BreadComponent[] = this._breadcrumbs.toArray();
-    let crumbWidthSum: number = 0;
+    let crumbWidthSum = 0;
     const hiddenCrumbs: BreadComponent[] = [];
     // loop through crumbs in reverse order to calculate which ones should be removed
     for (let i: number = crumbsArray.length - 1; i >= 0; i--) {

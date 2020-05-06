@@ -1,5 +1,6 @@
 :host {
   display: block;
+
   .x-mat-paginator {
     height: 48px;
     box-sizing: border-box;
@@ -9,9 +10,11 @@
     align-content: center;
     max-width: 100%;
     justify-content: flex-end;
+
     ::ng-deep > * {
       margin: 0 10px;
     }
+
     [mat-icon-button] {
       font-size: 12px;
       font-weight: normal;
