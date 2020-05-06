@@ -5,12 +5,11 @@ language: node_js
 node_js:
   - '10'
 
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+sources:
+  - google-chrome
+packages:
+  - dpkg
+  - google-chrome-stable
 
 cache:
   directories:
