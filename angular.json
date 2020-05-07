@@ -6,7 +6,7 @@
     "x-material": {
       "schematics": {
         "@schematics/angular:component": {
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "projectType": "library",
@@ -19,6 +19,11 @@
           "options": {
             "tsConfig": "projects/x-material/tsconfig.lib.json",
             "project": "projects/x-material/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/x-material/tsconfig.lib.prod.json"
+            }
           }
         },
         "lint": {
@@ -49,7 +54,7 @@
             "main": "projects/demo/src/main.ts",
             "polyfills": "projects/demo/src/polyfills.ts",
             "tsConfig": "projects/demo/tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": ["projects/demo/src/favicon.ico", "projects/demo/src/assets"],
             "styles": ["projects/demo/src/styles.scss"],
             "scripts": []
@@ -67,7 +72,6 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -101,6 +105,18 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "demo:build"
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "demo:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "demo:serve:production"
+            }
           }
         },
         "lint": {

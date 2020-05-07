@@ -8,6 +8,5 @@ import { routes } from './material/config';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'demo';
   configs = routes.map(item => item.path);
 }

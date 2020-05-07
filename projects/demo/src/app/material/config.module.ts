@@ -2,7 +2,8 @@ import { XMatDatePickerModule } from 'x-material/date-picker';
 
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatListModule, MatSelectModule } from '@angular/material';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 
 import { SharedModule } from '../shared';

@@ -1,6 +1,16 @@
 import {
-    AfterViewInit, ChangeDetectorRef, Component, Directive, ElementRef, HostBinding, HostListener,
-    Input, Renderer2, TemplateRef, ViewChild, ViewContainerRef
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  Directive,
+  ElementRef,
+  HostBinding,
+  HostListener,
+  Input,
+  Renderer2,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 
 import { xMatCollapseAnimation } from '../common/animations/collapse';
@@ -23,7 +33,7 @@ export class XMatMessageComponent implements AfterViewInit {
   @ViewChild(XMatMessageContainerDirective, { static: true }) _childElement: XMatMessageContainerDirective;
 
   // tslint:disable-next-line:no-any
-  @ViewChild('tpl', { static: false }) _template: TemplateRef<any>;
+  @ViewChild('tpl') _template: TemplateRef<any>;
 
   /**
    * label: string

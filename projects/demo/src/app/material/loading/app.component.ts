@@ -1,6 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { LoadingMode, LoadingType } from 'x-material/loading';
-import { XMatLoadingService } from 'x-material/loading/loading.service';
+import { LoadingMode, LoadingType, XMatLoadingService } from 'x-material/loading';
 
 import { Component } from '@angular/core';
 
