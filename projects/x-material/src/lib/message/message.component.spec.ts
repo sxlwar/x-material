@@ -1,5 +1,5 @@
 import { async, TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { XMatMessageComponent, XMatMessageContainerDirective } from './message.component';
@@ -12,7 +12,7 @@ describe('XMatMessageComponent', () => {
     }).compileComponents();
   }));
 
-  test('should create the app', () => {
+  it('should create the app', () => {
     const fixture = TestBed.createComponent(XMatMessageComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
