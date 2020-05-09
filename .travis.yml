@@ -5,17 +5,12 @@ language: node_js
 node_js:
   - '10'
 
-addons:
-  apt:
-    packages:
-      # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
-      - libgconf-2-4
-
 sources:
   - google-chrome
 packages:
   - dpkg
   - google-chrome-stable
+  - libgconf-2-4
 
 cache:
   npm: true
@@ -24,8 +19,8 @@ cache:
     - ~/.cache
 
 install:
-  - npm install
+  - npm ci
 
 script:
   - npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-  - $(npm bin)/cypress run --record
+  - npm run cypress:ci &
